@@ -45,7 +45,7 @@ function formSubmit() {
       </tr>
       <tr>
         <td height="30" align="right">数据库名称：</td>
-        <td align="left"><input name="dbName" type="text" class="input" id="dbName" value="jeecms_3_0_4_final" /></td>
+        <td align="left"><input name="dbName" type="text" class="input" id="dbName" value="tutucms_1_0_1_beta" /></td>
 				<td align="left">&nbsp;</td>
       </tr>
       <tr>
@@ -107,8 +107,8 @@ function formSubmit() {
 	</td>
   </tr>
 </table>
-<input type="hidden" name="dbFileName" value="/install/db/jeecms-db-3.0.4-final.sql"/>
-<input type="hidden" name="initFileName" value="/install/db/jeecms-init-3.0.4-final.sql"/>
+<input type="hidden" name="dbFileName" value="/install/db/tutucms-db-1.0.1-beta.sql"/>
+<input type="hidden" name="initFileName" value="/install/db/tutucms-init-1.0.1-beta.sql"/>
 </form>
 </body>
 </html>
