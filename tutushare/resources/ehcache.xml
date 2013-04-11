@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>
+    <diskStore path="D:/dgkp/user"/>
+    <defaultCache
+        maxElementsInMemory="10000"
+        eternal="false"
+        timeToIdleSeconds="3600"
+        timeToLiveSeconds="3600"
+        overflowToDisk="true"
+        diskSpoolBufferSizeMB="30"
+        maxElementsOnDisk="10000000"
+        memoryStoreEvictionPolicy="LRU"
+        />
+
+    <cache 
+    	name="role"
+        maxElementsInMemory="5000"
+        timeToIdleSeconds="1500"
+        timeToLiveSeconds="1500"
+        />
+   
+      
+</ehcache>

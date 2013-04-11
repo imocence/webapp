@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:util="http://www.springframework.org/schema/util"  
+    xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	 http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	 http://www.springframework.org/schema/oxm
+     http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd  
+     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd" default-autowire="byName">
+
+	<!-- 引入属性文件 -->
+	<context:property-placeholder location="classpath:config.properties"/>
+	<util:properties id="properties" location="classpath:config.properties"/>
+	
+	<aop:aspectj-autoproxy/>
+	
+	<!-- 自动扫描dao\service\aop包(自动注入) -->
+	<context:component-scan base-package="com.tutushare.**.service.impl" />
+	<context:component-scan base-package="com.tutushare.**.dao.impl" />
+
+	<!-- 定义jaxb解析器 -->
+	<oxm:jaxb2-marshaller id="marshaller">
+		<oxm:class-to-be-bound name="com.tutushare.ws.model.request.Name"/>
+	</oxm:jaxb2-marshaller>
+	
+	<!-- sprigws 客户端 -->
+	<bean 
+		class="com.tutushare.ws.client.TestClient"
+		p:defaultUri="http://localhost:8881/tutushare/service" 
+		p:marshaller-ref="marshaller" p:unmarshaller-ref="marshaller" />
+	
+	
+</beans>

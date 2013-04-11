@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       	http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- 自动扫描controller包下的所有类，使其认为spring mvc的控制器 -->
+	<context:component-scan base-package="com.tutushare.ws.service" />
+	<context:component-scan base-package="com.tutushare.ws.client" />
+	
+	
+    <!-- ===================== WSDL 定义    ============================== -->
+    <bean id="TestService" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+        <description>tutushare(webservice)代码</description>
+        <property name="schemaCollection">
+            <bean id="forumSchemaCollection" class="org.springframework.xml.xsd.commons.CommonsXsdSchemaCollection">
+                <property name="xsds">
+                    <list>
+                        <value>classpath:demo.xsd</value>
+                    </list>
+                </property>
+                <property name="inline" value="true"/>
+            </bean>
+        </property>
+        <!-- portTypeName 用于指定WSDL 端口类型 -->
+        <property name="portTypeName" value="TestServicePortType"/>
+        <!-- locationUri 用于指定Web 服务的URI 地址 -->
+        <property name="locationUri" value="http://localhost:8080/tutushare/service"/>
+        
+        <property name="targetNamespace"
+                  value="http://localhost:8080/tutushare/server/definitions"/>
+    </bean>
+    
+	<!-- 
+    <bean id="BbtForumServiceV2" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+        <property name="schemaCollection">
+            <bean id="forumSchemaCollectionV2" class="org.springframework.xml.xsd.commons.CommonsXsdSchemaCollection">
+                <property name="xsds">
+                    <list>
+                        <value>/resources/v2/forum_messages.xsd</value>
+                    </list>
+                </property>
+                <property name="inline" value="true"/>
+            </bean>
+        </property>
+        <property name="portTypeName" value="BbtForumServicePortType"/>
+        <property name="locationUri" value="http://localhost:8080/baobaotao/service/"/>
+        <property name="targetNamespace"
+                  value="http://www.baobaotao.com/ws/springws/server/definitions"/>
+    </bean>
+ 	-->
+</beans>
