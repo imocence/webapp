@@ -14,7 +14,7 @@ public class PermissionAspect {
 	
 	@Before("within(com.spar.web.front.FShareInfoController)")
 	public void shareInfoPermission() {
-		
+		int x = 1;
 	}
 	
 	@Before("within(com.spar.web.front.FTrainingController)")
