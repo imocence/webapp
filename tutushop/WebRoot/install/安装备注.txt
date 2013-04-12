@@ -1,0 +1,21 @@
+请导入/install 下面的 shopxx.sql
+
+数据库名称：shopxx
+如果不能导入请使用工具SQLyog Ultimate 
+
+修改数据库连接
+src/jdbc.properties
+
+后台地址
+http://localhost:8080/shopxx/admin/
+用户名：admin
+密码：123456
+
+在栏目"页面内容"——》“网站静态管理”——》“一键网站更新”
+
+logo替换地址
+/upload/image/logo.gif
+
+特别注明：请保留shopxx.txt文件及内容，程序里面有限制，现在还没有破解。希望有高手破解分享。
+
+QQ交流群：114562580
