@@ -1,5 +1,6 @@
 package com.jeecms.core.manager.impl;
 
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
@@ -29,8 +30,7 @@ import com.jeecms.core.manager.UnifiedUserMng;
 public class AuthenticationMngImpl implements AuthenticationMng {
 	private Logger log = LoggerFactory.getLogger(AuthenticationMngImpl.class);
 
-	public Authentication login(String username, String password, String ip,
-			HttpServletRequest request, HttpServletResponse response,
+	public Authentication login(String username, String password, String ip, HttpServletRequest request, HttpServletResponse response,
 			SessionProvider session) throws UsernameNotFoundException,
 			BadCredentialsException {
 		UnifiedUser user = unifiedUserMng.login(username, password, ip);
