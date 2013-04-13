@@ -14,6 +14,33 @@ public interface CmsCommentMng {
 	public Pagination getPageForTag(Integer siteId, Integer contentId,
 			Integer greaterThen, Boolean checked, boolean recommend,
 			boolean desc, int pageNo, int pageSize);
+	
+	/**
+	 * 
+	 * @param siteId
+	 * @param contentId
+	 * @param toUserId 写评论的用户
+	 * @param fromUserId 投稿的信息接收到的相关评论
+	 * @param greaterThen
+	 * @param checked
+	 * @param recommend
+	 * @param desc
+	 * @param pageNo
+	 * @param pageSize
+	 * @return
+	 */
+	public Pagination getPageForMember(Integer siteId, Integer contentId,Integer toUserId,Integer fromUserId,
+			Integer greaterThen, Boolean checked, Boolean recommend,
+			boolean desc, int pageNo, int pageSize);
+	/**
+	 * 
+	 * @param siteId
+	 * @param userId 发表信息用户id
+	 * @param commentUserId 评论用户id
+	 * @param ip  评论来访ip
+	 * @return
+	 */
+	public List<CmsComment> getListForDel(Integer siteId, Integer userId,Integer commentUserId,String ip);
 
 	public List<CmsComment> getListForTag(Integer siteId, Integer contentId,
 			Integer greaterThen, Boolean checked, boolean recommend,

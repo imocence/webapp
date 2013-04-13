@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import com.jeecms.cms.entity.main.Channel;
 import com.jeecms.cms.entity.main.CmsGroup;
 import com.jeecms.cms.entity.main.CmsModel;
@@ -35,14 +36,21 @@ import com.jeecms.cms.entity.main.ContentExt;
 import com.jeecms.cms.entity.main.ContentTxt;
 import com.jeecms.cms.entity.main.ContentType;
 import com.jeecms.cms.entity.main.Content.ContentStatus;
+import com.jeecms.cms.manager.assist.CmsFileMng;
 import com.jeecms.cms.manager.main.ChannelMng;
 import com.jeecms.cms.manager.main.CmsGroupMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsModelItemMng;
 import com.jeecms.cms.manager.main.CmsModelMng;
 import com.jeecms.cms.manager.main.CmsTopicMng;
 import com.jeecms.cms.manager.main.CmsUserMng;
 import com.jeecms.cms.manager.main.ContentMng;
 import com.jeecms.cms.manager.main.ContentTypeMng;
+import com.jeecms.cms.staticpage.exception.ContentNotCheckedException;
+import com.jeecms.cms.staticpage.exception.GeneratedZeroStaticPageException;
+import com.jeecms.cms.staticpage.exception.StaticPageNotOpenException;
+import com.jeecms.cms.staticpage.exception.TemplateNotFoundException;
+import com.jeecms.cms.staticpage.exception.TemplateParseException;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
 import com.jeecms.common.page.Pagination;
@@ -396,7 +404,11 @@ public class ContentAct {
 		bean = manager.save(bean, ext, txt, channelIds, topicIds, viewGroupIds,
 				tagArr, attachmentPaths, attachmentNames, attachmentFilenames,
 				picPaths, picDescs, channelId, typeId, draft, user, false);
+		//处理附件
+		fileMng.updateFileByPaths(attachmentPaths,picPaths,ext.getMediaPath(),ext.getTitleImg(),ext.getTypeImg(),ext.getContentImg(),true,bean);
 		log.info("save Content id={}", bean.getId());
+		cmsLogMng.operating(request, "content.log.save", "id=" + bean.getId()
+				+ ";title=" + bean.getTitle());
 		if (cid != null) {
 			model.addAttribute("cid", cid);
 		}
@@ -410,9 +422,11 @@ public class ContentAct {
 			Integer queryOrderBy, Content bean, ContentExt ext, ContentTxt txt,
 			Integer[] channelIds, Integer[] topicIds, Integer[] viewGroupIds,
 			String[] attachmentPaths, String[] attachmentNames,
-			String[] attachmentFilenames, String[] picPaths, String[] picDescs,
+			String[] attachmentFilenames, String[] picPaths,String[] picDescs,
 			Integer channelId, Integer typeId, String tagStr, Boolean draft,
-			Integer cid, Integer pageNo, HttpServletRequest request,
+			Integer cid,String[]oldattachmentPaths,String[] oldpicPaths,
+			String oldTitleImg,String oldContentImg,String oldTypeImg,
+			Integer pageNo, HttpServletRequest request,
 			ModelMap model) {
 		WebErrors errors = validateUpdate(bean.getId(), request);
 		if (errors.hasErrors()) {
@@ -432,7 +446,13 @@ public class ContentAct {
 				viewGroupIds, attachmentPaths, attachmentNames,
 				attachmentFilenames, picPaths, picDescs, attr, channelId,
 				typeId, draft, user, false);
+		//处理之前的附件有效性
+		fileMng.updateFileByPaths(oldattachmentPaths,oldpicPaths,null,oldTitleImg,oldTypeImg,oldContentImg,false,bean);
+		//处理更新后的附件有效性
+		fileMng.updateFileByPaths(attachmentPaths,picPaths,ext.getMediaPath(),ext.getTitleImg(),ext.getTypeImg(),ext.getContentImg(),true,bean);
 		log.info("update Content id={}.", bean.getId());
+		cmsLogMng.operating(request, "content.log.update", "id=" + bean.getId()
+				+ ";title=" + bean.getTitle());
 		return list(queryStatus, queryTypeId, queryTopLevel, queryRecommend,
 				queryOrderBy, cid, pageNo, request, model);
 	}
@@ -455,9 +475,16 @@ public class ContentAct {
 				log.info("delete to cycle, Content id={}", bean.getId());
 			}
 		} else {
+			for(Integer id:ids){
+				Content c=manager.findById(id);
+				//处理附件
+				manager.updateFileByContent(c, false);
+			}
 			beans = manager.deleteByIds(ids);
 			for (Content bean : beans) {
 				log.info("delete Content id={}", bean.getId());
+				cmsLogMng.operating(request, "content.log.delete", "id="
+						+ bean.getId() + ";title=" + bean.getTitle());
 			}
 		}
 		return list(queryStatus, queryTypeId, queryTopLevel, queryRecommend,
@@ -477,6 +504,42 @@ public class ContentAct {
 		Content[] beans = manager.check(ids, user);
 		for (Content bean : beans) {
 			log.info("check Content id={}", bean.getId());
+		}
+		return list(queryStatus, queryTypeId, queryTopLevel, queryRecommend,
+				queryOrderBy, cid, pageNo, request, model);
+	}
+
+	@RequestMapping("/content/o_static.do")
+	public String contentStatic(String queryStatus, Integer queryTypeId,
+			Boolean queryTopLevel, Boolean queryRecommend,
+			Integer queryOrderBy, Integer[] ids, Integer cid, Integer pageNo,
+			HttpServletRequest request, ModelMap model) {
+		WebErrors errors = validateStatic(ids, request);
+		if (errors.hasErrors()) {
+			return errors.showErrorPage(model);
+		}
+		try {
+			Content[] beans = manager.contentStatic(ids);
+			for (Content bean : beans) {
+				log.info("static Content id={}", bean.getId());
+			}
+			model.addAttribute("message", errors.getMessage(
+					"content.staticGenerated", beans.length));
+		} catch (TemplateNotFoundException e) {
+			model.addAttribute("message", errors.getMessage(e.getMessage(),
+					new Object[] { e.getErrorTitle(), e.getGenerated() }));
+		} catch (TemplateParseException e) {
+			model.addAttribute("message", errors.getMessage(e.getMessage(),
+					new Object[] { e.getErrorTitle(), e.getGenerated() }));
+		} catch (GeneratedZeroStaticPageException e) {
+			model.addAttribute("message", errors.getMessage(e.getMessage(), e
+					.getGenerated()));
+		} catch (StaticPageNotOpenException e) {
+			model.addAttribute("message", errors.getMessage(e.getMessage(),
+					new Object[] { e.getErrorTitle(), e.getGenerated() }));
+		} catch (ContentNotCheckedException e) {
+			model.addAttribute("message", errors.getMessage(e.getMessage(),
+					new Object[] { e.getErrorTitle(), e.getGenerated() }));
 		}
 		return list(queryStatus, queryTypeId, queryTopLevel, queryRecommend,
 				queryOrderBy, cid, pageNo, request, model);
@@ -537,6 +600,7 @@ public class ContentAct {
 				// 加上部署路径
 				fileUrl = ctx + fileUrl;
 			}
+			fileMng.saveFileByPath(fileUrl, origName, false);
 			model.addAttribute("attachmentPath", fileUrl);
 			model.addAttribute("attachmentName", origName);
 			model.addAttribute("attachmentNum", attachmentNum);
@@ -606,6 +670,7 @@ public class ContentAct {
 					fileUrl = ctx + fileUrl;
 				}
 			}
+			fileMng.saveFileByPath(fileUrl, fileUrl, false);
 			model.addAttribute("mediaPath", fileUrl);
 			model.addAttribute("mediaExt", ext);
 		} catch (IllegalStateException e) {
@@ -653,6 +718,11 @@ public class ContentAct {
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
+		for(Integer id:ids){
+			Content c=manager.findById(id);
+			//处理附件
+			manager.updateFileByContent(c, false);
+		}
 		Content[] beans = manager.deleteByIds(ids);
 		for (Content bean : beans) {
 			log.info("delete Content id={}", bean.getId());
@@ -699,7 +769,7 @@ public class ContentAct {
 		tplList = CoreUtils.tplTrim(tplList, tplPath, tpl);
 		return tplList;
 	}
-
+	
 	private WebErrors validateTree(String path, HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		// if (errors.ifBlank(path, "path", 255)) {
@@ -809,6 +879,16 @@ public class ContentAct {
 		return errors;
 	}
 
+	private WebErrors validateStatic(Integer[] ids, HttpServletRequest request) {
+		WebErrors errors = WebErrors.create(request);
+		CmsSite site = CmsUtils.getSite(request);
+		errors.ifEmpty(ids, "ids");
+		for (Integer id : ids) {
+			vldExist(id, site.getId(), errors);
+		}
+		return errors;
+	}
+
 	private WebErrors validateReject(Integer[] ids, HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		CmsSite site = CmsUtils.getSite(request);
@@ -844,8 +924,6 @@ public class ContentAct {
 	}
 
 	@Autowired
-	private ContentMng manager;
-	@Autowired
 	private ChannelMng channelMng;
 	@Autowired
 	private CmsUserMng cmsUserMng;
@@ -865,5 +943,11 @@ public class ContentAct {
 	private FileRepository fileRepository;
 	@Autowired
 	private DbFileMng dbFileMng;
+	@Autowired
+	private CmsLogMng cmsLogMng;
+	@Autowired
+	private ContentMng manager;
+	@Autowired
+	private CmsFileMng fileMng;
 
 }

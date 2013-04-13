@@ -8,11 +8,12 @@ import com.jeecms.common.security.BadCredentialsException;
 import com.jeecms.common.security.UsernameNotFoundException;
 import com.jeecms.common.web.session.SessionProvider;
 import com.jeecms.core.entity.Authentication;
+import com.jeecms.core.entity.UnifiedUser;
 
 /**
  * 认证信息管理接口
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface AuthenticationMng {
@@ -56,7 +57,20 @@ public interface AuthenticationMng {
 			HttpServletRequest request, HttpServletResponse response,
 			SessionProvider session) throws UsernameNotFoundException,
 			BadCredentialsException;
-
+	
+	/**
+	 * 注册后登录
+	 * @param user
+	 * @param ip
+	 * 			登录IP
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @return
+	 */
+	public Authentication activeLogin(UnifiedUser user, String ip,
+			HttpServletRequest request, HttpServletResponse response,
+			SessionProvider session);
 	/**
 	 * 获得认证分页信息
 	 * 
@@ -100,4 +114,5 @@ public interface AuthenticationMng {
 	 * @return
 	 */
 	public Authentication[] deleteByIds(String[] ids);
+
 }

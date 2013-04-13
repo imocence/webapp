@@ -21,7 +21,7 @@ import org.springframework.web.util.UrlPathHelper;
 /**
  * HttpServletRequest帮助类
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class RequestUtils {
@@ -153,18 +153,28 @@ public class RequestUtils {
 		return ht;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static Map<String, String> getRequestMap(HttpServletRequest request,
 			String prefix) {
+		return getRequestMap(request, prefix, false);
+	}
+
+	public static Map<String, String> getRequestMapWithPrefix(
+			HttpServletRequest request, String prefix) {
+		return getRequestMap(request, prefix, true);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Map<String, String> getRequestMap(
+			HttpServletRequest request, String prefix, boolean nameWithPrefix) {
 		Map<String, String> map = new HashMap<String, String>();
 		Enumeration<String> names = request.getParameterNames();
-		String name;
+		String name, key, value;
 		while (names.hasMoreElements()) {
 			name = names.nextElement();
 			if (name.startsWith(prefix)) {
-				request.getParameterValues(name);
-				map.put(name.substring(prefix.length()), StringUtils.join(
-						request.getParameterValues(name), ','));
+				key = nameWithPrefix ? name : name.substring(prefix.length());
+				value = StringUtils.join(request.getParameterValues(name), ',');
+				map.put(key, value);
 			}
 		}
 		return map;

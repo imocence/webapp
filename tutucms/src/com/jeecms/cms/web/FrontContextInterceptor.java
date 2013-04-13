@@ -23,7 +23,7 @@ import com.jeecms.core.manager.AuthenticationMng;
  * 
  * 包括登录信息、权限信息、站点信息
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class FrontContextInterceptor extends HandlerInterceptorAdapter {

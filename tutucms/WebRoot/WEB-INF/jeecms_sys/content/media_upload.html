@@ -14,6 +14,7 @@ function uploadMedia() {
 	$("#mfc").append(mf.clone().attr('value',''));
 	//修改属性
 	mf.attr("id","");
+	$("#mediaFileText").attr('value','');
 	//其他表单
 	$("#mediaFilename").val($("#origFilename").val());
 	$("#mediaForm").submit();

@@ -28,16 +28,24 @@
 		</property>
 	</bean>
 	
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/config/firewall.properties</value>
+			</list>
+		</property>
+	</bean>
+	
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
 		<property name="interceptors">
 			<list>
 				<ref bean="adminContextInterceptor"/>
 				<ref bean="adminLocaleIntercept"/>
+				<ref bean="fireWallInterceptor"/>
 			</list>
 		</property>
 	</bean>
 	<bean id="adminContextInterceptor" class="com.jeecms.cms.web.AdminContextInterceptor">
-		<!--<property name="adminId" value="1"/>-->
 		<property name="auth" value="true"/>
 		<property name="loginUrl" value="/jeeadmin/jeecms/login.do"/>
 		<property name="returnUrl" value="/jeeadmin/jeecms/index.do"/>
@@ -49,6 +57,9 @@
 		</property>
 	</bean>
 	<bean id="adminLocaleIntercept" class="com.jeecms.cms.web.AdminLocaleInterceptor"/>
+	
+	<bean id="fireWallInterceptor" class="com.jeecms.cms.web.FireWallInterceptor">
+	</bean>
 	
 	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
 		<property name="cookieName" value="clientlanguage"/>
@@ -86,7 +97,7 @@
 		</property>
 		<property name="freemarkerSettings">
 			<props>
-				<prop key="template_update_delay">900000</prop>
+				<prop key="template_update_delay">0</prop>
 				<prop key="defaultEncoding">UTF-8</prop>
 				<prop key="url_escaping_charset">UTF-8</prop>
 				<prop key="locale">zh_CN</prop>

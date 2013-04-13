@@ -12,11 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.jeecms.cms.entity.main.Content;
 import com.jeecms.cms.service.ContentListenerAbstract;
-/**
- * 
- * @author coco
- *
- */
+
 @Component
 public class ContentLuceneListener extends ContentListenerAbstract {
 	private static final Logger log = LoggerFactory

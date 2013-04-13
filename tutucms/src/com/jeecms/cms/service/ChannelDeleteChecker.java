@@ -3,7 +3,7 @@ package com.jeecms.cms.service;
 /**
  * 检查栏目是否可以删除的接口
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface ChannelDeleteChecker {

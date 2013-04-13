@@ -29,6 +29,8 @@ public class ContentExtMngImpl implements ContentExtMng {
 		Updater<ContentExt> updater = new Updater<ContentExt>(bean);
 		bean = dao.updateByUpdater(updater);
 		bean.blankToNull();
+		// 修改后需要重新生成静态页
+		bean.setNeedRegenerate(true);
 		return bean;
 	}
 

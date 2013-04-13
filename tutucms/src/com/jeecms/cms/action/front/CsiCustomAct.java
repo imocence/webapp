@@ -19,7 +19,7 @@ import com.jeecms.common.web.RequestUtils;
 /**
  * 自定义客户端包含模板
  * 
- * @author coco
+ * @author liufang
  * 
  */
 @Controller

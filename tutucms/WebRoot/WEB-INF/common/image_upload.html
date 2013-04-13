@@ -13,6 +13,7 @@ function upload(n) {
 	//复制一个file放至原处
 	$("#ufc"+n).append(of.clone().attr("value",""));
 	//修改属性
+	$("#uploadFileText"+n).attr("value","");
 	of.attr("id","");
 	of.attr("name","uploadFile");
 	//其他表单

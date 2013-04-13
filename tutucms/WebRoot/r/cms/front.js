@@ -22,6 +22,15 @@ Cms.viewCount = function(base, contentId, viewId, commentId, downloadId, upId,
 	});
 }
 /**
+ * 站点流量统计
+ */
+Cms.siteFlow = function(base, page, referer) {
+	$.get(base + "/flow_statistic.jspx", {
+		page : page,
+		referer : referer
+	});
+}
+/**
  * 成功返回true，失败返回false。
  */
 Cms.up = function(base, contentId, origValue, upId) {
@@ -170,4 +179,63 @@ Cms.LeftRoller.prototype.roll = function() {
 	} else {
 		this.proll[0].scrollLeft += this.rollSpan;
 	}
+}
+/**
+ * 收藏信息
+ */
+Cms.collect = function(base, cId, operate,showSpanId,hideSpanId) {
+	$.post(base + "/member/collect.jspx", {
+		"cId" : cId,
+		"operate" : operate
+	}, function(data) {
+		if(data.result){
+			if(operate==1){
+				alert("收藏成功！");
+				$("#"+showSpanId).show();
+				$("#"+hideSpanId).hide();
+			}else{
+				alert("取消收藏成功！");
+				$("#"+showSpanId).hide();
+				$("#"+hideSpanId).show();
+			}
+		}else{
+			alert("请先登录");
+		}
+	}, "json");
+}
+/**
+ * 列表取消收藏信息
+ */
+Cms.cmsCollect = function(base, cId, operate) {
+	$.post(base + "/member/collect.jspx", {
+		"cId" : cId,
+		"operate" : operate
+	}, function(data) {
+		if(data.result){
+			if(operate==1){
+				alert("收藏成功！");
+			}else{
+				alert("取消收藏成功！");
+				$("#tr_"+cId).remove();
+			}
+		}else{
+			alert("请先登录");
+		}
+	}, "json");
+}
+/**
+ * 检测是否已经收藏信息
+ */
+Cms.collectexist = function(base, cId,showSpanId,hideSpanId) {
+	$.post(base + "/member/collect_exist.jspx", {
+		"cId" : cId
+	}, function(data) {
+		if(data.result){
+			$("#"+showSpanId).show();
+			$("#"+hideSpanId).hide();
+		}else{
+			$("#"+showSpanId).hide();
+			$("#"+hideSpanId).show();
+		}
+	}, "json");
 }

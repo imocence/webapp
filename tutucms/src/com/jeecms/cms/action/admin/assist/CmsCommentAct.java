@@ -2,8 +2,11 @@ package com.jeecms.cms.action.admin.assist;
 
 import static com.jeecms.common.page.SimplePage.cpn;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import com.jeecms.cms.entity.assist.CmsComment;
 import com.jeecms.cms.entity.assist.CmsCommentExt;
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.manager.assist.CmsCommentMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
 import com.jeecms.common.page.Pagination;
@@ -57,14 +61,20 @@ public class CmsCommentAct {
 
 	@RequestMapping("/comment/o_update.do")
 	public String update(Integer queryContentId, Boolean queryChecked,
-			Boolean queryRecommend, CmsComment bean, CmsCommentExt ext,
+			Boolean queryRecommend,String reply, CmsComment bean, CmsCommentExt ext,
 			Integer pageNo, HttpServletRequest request, ModelMap model) {
 		WebErrors errors = validateUpdate(bean.getId(), request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
+		//若回复内容不为空而且回复更新，则设置回复时间，已最新回复时间为准
+		if(StringUtils.isNotBlank(ext.getReply())&&!reply.equals(ext.getReply())){
+			bean.setReplayTime(new Date());
+		}
 		bean = manager.update(bean, ext);
 		log.info("update CmsComment id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsComment.log.update", "id="
+				+ bean.getId());
 		return list(queryContentId, queryChecked, queryRecommend, pageNo,
 				request, model);
 	}
@@ -80,6 +90,8 @@ public class CmsCommentAct {
 		CmsComment[] beans = manager.deleteByIds(ids);
 		for (CmsComment bean : beans) {
 			log.info("delete CmsComment id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsComment.log.delete", "id="
+					+ bean.getId());
 		}
 		return list(queryContentId, queryChecked, queryRecommend, pageNo,
 				request, model);
@@ -130,6 +142,8 @@ public class CmsCommentAct {
 		return false;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsCommentMng manager;
 }

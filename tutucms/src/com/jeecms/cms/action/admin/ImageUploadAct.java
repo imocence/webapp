@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.entity.main.MarkConfig;
+import com.jeecms.cms.manager.assist.CmsFileMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.common.image.ImageScale;
 import com.jeecms.common.image.ImageUtils;
@@ -146,6 +147,7 @@ public class ImageUploadAct {
 					fileUrl = ctx + fileUrl;
 				}
 			}
+			fileMng.saveFileByPath(fileUrl, origName, false);
 			model.addAttribute("uploadPath", fileUrl);
 			model.addAttribute("uploadNum", uploadNum);
 		} catch (IllegalStateException e) {
@@ -213,6 +215,7 @@ public class ImageUploadAct {
 	private DbFileMng dbFileMng;
 	private ImageScale imageScale;
 	private RealPathResolver realPathResolver;
+	private CmsFileMng fileMng;
 
 	@Autowired
 	public void setFileRepository(FileRepository fileRepository) {
@@ -233,4 +236,10 @@ public class ImageUploadAct {
 	public void setRealPathResolver(RealPathResolver realPathResolver) {
 		this.realPathResolver = realPathResolver;
 	}
+
+	@Autowired
+	public void setFileMng(CmsFileMng fileMng) {
+		this.fileMng = fileMng;
+	}
+	
 }

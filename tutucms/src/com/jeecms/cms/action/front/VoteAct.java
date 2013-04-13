@@ -84,7 +84,7 @@ public class VoteAct {
 						"-");
 				// 写cookie
 				CookieUtils.addCookie(request, response, cookieName,
-						cookieValue, Integer.MAX_VALUE);
+						cookieValue, Integer.MAX_VALUE, null);
 			}
 			CmsVoteTopic vote = cmsVoteTopicMng.vote(voteId, itemIds, user, ip,
 					cookieValue);

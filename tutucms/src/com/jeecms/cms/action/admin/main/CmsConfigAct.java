@@ -13,7 +13,12 @@ import com.jeecms.cms.entity.main.CmsConfig;
 import com.jeecms.cms.entity.main.MarkConfig;
 import com.jeecms.cms.entity.main.MemberConfig;
 import com.jeecms.cms.manager.main.CmsConfigMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.web.WebErrors;
+import com.jeecms.core.entity.Config.ConfigEmailSender;
+import com.jeecms.core.entity.Config.ConfigLogin;
+import com.jeecms.core.entity.Config.ConfigMessageTemplate;
+import com.jeecms.core.manager.ConfigMng;
 
 @Controller
 public class CmsConfigAct {
@@ -36,6 +41,7 @@ public class CmsConfigAct {
 		bean = manager.update(bean);
 		model.addAttribute("message", "global.success");
 		log.info("update systemConfig of CmsConfig.");
+		cmsLogMng.operating(request, "cmsConfig.log.systemUpdate", null);
 		return systemEdit(request, model);
 	}
 
@@ -55,6 +61,7 @@ public class CmsConfigAct {
 		bean = manager.updateMarkConfig(bean);
 		model.addAttribute("message", "global.success");
 		log.info("update markConfig of CmsConfig.");
+		cmsLogMng.operating(request, "cmsConfig.log.markUpdate", null);
 		return markEdit(request, model);
 	}
 
@@ -65,7 +72,8 @@ public class CmsConfigAct {
 	}
 
 	@RequestMapping("/config/o_member_update.do")
-	public String memberUpdate(MemberConfig bean, Integer pageNo,
+	public String memberUpdate(MemberConfig bean, ConfigLogin configLogin,
+			ConfigEmailSender emailSender, ConfigMessageTemplate msgTpl,
 			HttpServletRequest request, ModelMap model) {
 		WebErrors errors = validateMemberUpdate(bean, request);
 		if (errors.hasErrors()) {
@@ -74,7 +82,30 @@ public class CmsConfigAct {
 		manager.updateMemberConfig(bean);
 		model.addAttribute("message", "global.success");
 		log.info("update memberConfig of CmsConfig.");
+		cmsLogMng.operating(request, "cmsConfig.log.memberUpdate", null);
 		return memberEdit(request, model);
+	}
+
+	@RequestMapping("/config/v_login_edit.do")
+	public String loginEdit(HttpServletRequest request, ModelMap model) {
+		model.addAttribute("configLogin", configMng.getConfigLogin());
+		model.addAttribute("emailSender", configMng.getEmailSender());
+		model.addAttribute("forgotPasswordTemplate", configMng.getForgotPasswordMessageTemplate());
+		model.addAttribute("registerTemplate", configMng.getRegisterMessageTemplate());
+		return "config/login_edit";
+	}
+
+	@RequestMapping("/config/o_login_update.do")
+	public String loginUpdate(ConfigLogin configLogin,
+			ConfigEmailSender emailSender, ConfigMessageTemplate msgTpl,
+			HttpServletRequest request, ModelMap model) {
+		configMng.updateOrSave(configLogin.getAttr());
+		configMng.updateOrSave(emailSender.getAttr());
+		configMng.updateOrSave(msgTpl.getAttr());
+		model.addAttribute("message", "global.success");
+		log.info("update loginCoinfig of Config.");
+		cmsLogMng.operating(request, "cmsConfig.log.loginUpdate", null);
+		return loginEdit(request, model);
 	}
 
 	private WebErrors validateSystemUpdate(CmsConfig bean,
@@ -95,6 +126,10 @@ public class CmsConfigAct {
 		return errors;
 	}
 
+	@Autowired
+	private ConfigMng configMng;
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsConfigMng manager;
 }

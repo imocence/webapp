@@ -22,8 +22,8 @@ public interface StaticPageDao {
 	public int contentStatic(Integer siteId, Integer channelId, Date start,
 			Configuration conf, Map<String, Object> data) throws IOException,
 			TemplateException;
-
-	public void contentStatic(Content c, Configuration conf,
+	
+	public boolean contentStatic(Content c, Configuration conf,
 			Map<String, Object> data) throws IOException, TemplateException;
 
 	public int contentsOfChannel(Integer channelId);

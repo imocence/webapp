@@ -28,8 +28,7 @@ function optPriority() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "channel.function"/> - <@s.m "global.list"/></div>
 	<form class="ropt">
 		<input type="hidden" name="root" value="${root!}"/>
@@ -44,6 +43,7 @@ function optPriority() {
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <form id="tableForm" method="post">
 <input type="hidden" name="root" value="${root!}"/>
 <input type="hidden" name="pageNo" value="${pageNo!}"/>
@@ -54,7 +54,7 @@ function optPriority() {
 	<@p.column title="ID">${channel.id}<input type="hidden" name="wids" value="${channel.id}"/></@p.column><#t/>
 	<@p.column code="channel.name">${channel.name} [<span style="color:red">${channel.model.name}</span>]</@p.column><#t/>
 	<@p.column code="channel.path">${channel.path}</@p.column><#t/>
-	<@p.column code="channel.priority" align="center"><input type="text" name="priority" value="${channel.priority}" style="width:40px"/></@p.column><#t/>
+	<@p.column code="channel.priority" align="center"><input type="text" name="priority" value="${channel.priority}" style="width:40px; border:1px solid #7e9db9"/></@p.column><#t/>
 	<@p.column code="channel.display" align="center"><#if channel.display><@s.m "global.true"/><#else><@s.m "global.false"/></#if></@p.column><#t/>
 	<@p.column code="global.operate" align="center">
 		<@cms_perm url="/channel/v_edit.do">
@@ -65,12 +65,12 @@ function optPriority() {
 		</@cms_perm>
 	</@p.column><#t/>
 </@p.table>
-<div>
+<div style="margin-top:15px;">
 	<@cms_perm url="/channel/o_delete.do">
-	<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
+	<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();" class="del-button"/>
 	</@cms_perm>
 	<@cms_perm url="/channel/o_priority.do">
-&nbsp; <input type="button" value="<@s.m "global.saveOrder"/>" onclick="optPriority();"/>
+&nbsp; <input type="button" value="<@s.m "global.saveOrder"/>" onclick="optPriority();" class="save-order"/>
 	</@cms_perm>
 </div>
 </form>

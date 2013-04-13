@@ -18,8 +18,8 @@ public class CmsUserExt extends BaseCmsUserExt {
 		if (StringUtils.isBlank(getComefrom())) {
 			setComefrom(null);
 		}
-		if (StringUtils.isBlank(getMoble())) {
-			setMoble(null);
+		if (StringUtils.isBlank(getMobile())) {
+			setMobile(null);
 		}
 		if (StringUtils.isBlank(getPhone())) {
 			setPhone(null);

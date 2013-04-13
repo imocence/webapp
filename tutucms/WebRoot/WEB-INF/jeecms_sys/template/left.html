@@ -14,13 +14,20 @@ $(function(){
 </script>
 </head>
 <body class="lbody">
-<div class="lttop">
-	<a href="javascript:location.href=location.href"><@s.m "global.refresh"/></a>
-<@cms_perm url="/template/v_setting.do">
-&nbsp; <a href="v_setting.do" target="rightFrame"><@s.m "template.setting"/></a>
-</@cms_perm>
+<div class="left">
+	<#include "/jeecms_sys/date.html"/>
+	<div class="fresh">
+		 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	          <tr>
+	            <td  height="35" align="center"><img src="${base}/res/jeecms/img/admin/refresh-icon.png" />&nbsp;&nbsp;<a href="javascript:location.href=location.href"><@s.m "global.refresh"/></a></td>
+	           	<@cms_perm url="/template/v_setting.do">
+	            <td width="2" height="35" valign="middle"><img src="${base}/res/jeecms/img/admin/left-line.png" /></td>
+	            <td height="35" align="center"><img src="${base}/res/jeecms/img/admin/set.png" />&nbsp;&nbsp;<a href="v_setting.do" target="rightFrame"><@s.m "template.setting"/></a></td>
+	      	 	</@cms_perm>
+	      	 </tr>
+	     </table>
+	</div>
 </div>
-<hr/>
 <ul id="browser" class="filetree"></ul>
 </body>
 </html>

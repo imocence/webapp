@@ -29,6 +29,9 @@ public class ContentExt extends BaseContentExt {
 		if (getBold() == null) {
 			setBold(false);
 		}
+		if(getNeedRegenerate()==null){
+			setNeedRegenerate(true);
+		}
 		blankToNull();
 	}
 
@@ -93,13 +96,15 @@ public class ContentExt extends BaseContentExt {
 		java.lang.Integer id,
 		java.lang.String title,
 		java.util.Date releaseDate,
-		java.lang.Boolean bold) {
+		java.lang.Boolean bold,
+		java.lang.Boolean needRegenerate) {
 
 		super (
 			id,
 			title,
 			releaseDate,
-			bold);
+			bold,
+			needRegenerate);
 	}
 
 	/* [CONSTRUCTOR MARKER END] */

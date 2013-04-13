@@ -15,37 +15,38 @@ import java.io.Serializable;
 public abstract class BaseCmsAcquisition  implements Serializable {
 
 	public static String REF = "CmsAcquisition";
-	public static String PROP_TYPE = "type";
-	public static String PROP_STATUS = "status";
-	public static String PROP_TITLE_START = "titleStart";
-	public static String PROP_SITE = "site";
+	public static String PROP_USER = "user";
+	public static String PROP_LINK_START = "linkStart";
 	public static String PROP_DESCRIPTION_END = "descriptionEnd";
-	public static String PROP_LINK_END = "linkEnd";
-	public static String PROP_TOTAL_ITEM = "totalItem";
-	public static String PROP_DESCRIPTION_START = "descriptionStart";
-	public static String PROP_LINKSET_END = "linksetEnd";
-	public static String PROP_CURR_NUM = "currNum";
 	public static String PROP_CHANNEL = "channel";
 	public static String PROP_DYNAMIC_START = "dynamicStart";
-	public static String PROP_NAME = "name";
-	public static String PROP_KEYWORDS_END = "keywordsEnd";
-	public static String PROP_KEYWORDS_START = "keywordsStart";
+	public static String PROP_CONTENT_START = "contentStart";
+	public static String PROP_TYPE = "type";
 	public static String PROP_PAGINATION_END = "paginationEnd";
-	public static String PROP_CONTENT_END = "contentEnd";
-	public static String PROP_USER = "user";
-	public static String PROP_TITLE_END = "titleEnd";
-	public static String PROP_PLAN_LIST = "planList";
-	public static String PROP_PAUSE_TIME = "pauseTime";
-	public static String PROP_END_TIME = "endTime";
+	public static String PROP_LINKSET_START = "linksetStart";
+	public static String PROP_DYNAMIC_ADDR = "dynamicAddr";
+	public static String PROP_LINKSET_END = "linksetEnd";
+	public static String PROP_KEYWORDS_END = "keywordsEnd";
+	public static String PROP_CURR_NUM = "currNum";
+	public static String PROP_QUEUE = "queue";
+	public static String PROP_LINK_END = "linkEnd";
 	public static String PROP_START_TIME = "startTime";
 	public static String PROP_PAGINATION_START = "paginationStart";
-	public static String PROP_LINKSET_START = "linksetStart";
-	public static String PROP_LINK_START = "linkStart";
+	public static String PROP_SITE = "site";
+	public static String PROP_TOTAL_ITEM = "totalItem";
 	public static String PROP_CURR_ITEM = "currItem";
-	public static String PROP_DYNAMIC_ADDR = "dynamicAddr";
-	public static String PROP_CONTENT_START = "contentStart";
-	public static String PROP_ID = "id";
+	public static String PROP_NAME = "name";
+	public static String PROP_STATUS = "status";
+	public static String PROP_PAUSE_TIME = "pauseTime";
+	public static String PROP_TITLE_START = "titleStart";
+	public static String PROP_TITLE_END = "titleEnd";
+	public static String PROP_CONTENT_END = "contentEnd";
 	public static String PROP_PAGE_ENCODING = "pageEncoding";
+	public static String PROP_ID = "id";
+	public static String PROP_PLAN_LIST = "planList";
+	public static String PROP_END_TIME = "endTime";
+	public static String PROP_KEYWORDS_START = "keywordsStart";
+	public static String PROP_DESCRIPTION_START = "descriptionStart";
 	public static String PROP_DYNAMIC_END = "dynamicEnd";
 
 
@@ -77,7 +78,8 @@ public abstract class BaseCmsAcquisition  implements Serializable {
 		java.lang.Integer currItem,
 		java.lang.Integer totalItem,
 		java.lang.Integer pauseTime,
-		java.lang.String pageEncoding) {
+		java.lang.String pageEncoding,
+		java.lang.Integer queue) {
 
 		this.setId(id);
 		this.setUser(user);
@@ -91,6 +93,7 @@ public abstract class BaseCmsAcquisition  implements Serializable {
 		this.setTotalItem(totalItem);
 		this.setPauseTime(pauseTime);
 		this.setPageEncoding(pageEncoding);
+		this.setQueue(queue);
 		initialize();
 	}
 
@@ -131,6 +134,7 @@ public abstract class BaseCmsAcquisition  implements Serializable {
 	private java.lang.String contentEnd;
 	private java.lang.String paginationStart;
 	private java.lang.String paginationEnd;
+	private java.lang.Integer queue;
 
 	// many to one
 	private com.jeecms.cms.entity.main.CmsUser user;
@@ -591,6 +595,22 @@ public abstract class BaseCmsAcquisition  implements Serializable {
 	 */
 	public void setPaginationEnd (java.lang.String paginationEnd) {
 		this.paginationEnd = paginationEnd;
+	}
+
+
+	/**
+	 * Return the value associated with the column: queue
+	 */
+	public java.lang.Integer getQueue () {
+		return queue;
+	}
+
+	/**
+	 * Set the value related to the column: queue
+	 * @param queue the queue value
+	 */
+	public void setQueue (java.lang.Integer queue) {
+		this.queue = queue;
 	}
 
 

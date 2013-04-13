@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.jeecms.cms.entity.assist.CmsKeyword;
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.manager.assist.CmsKeywordMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
 
@@ -41,6 +42,8 @@ public class CmsKeywordAct {
 		bean = manager.save(bean);
 		model.addAttribute("message", "global.success");
 		log.info("save CmsKeyword id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsKeyword.log.save", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return list(request, model);
 	}
 
@@ -56,6 +59,7 @@ public class CmsKeywordAct {
 		}
 		log.info("update CmsKeyword");
 		model.addAttribute("message", "global.success");
+		cmsLogMng.operating(request, "cmsKeyword.log.update", null);
 		return list(request, model);
 	}
 
@@ -69,6 +73,8 @@ public class CmsKeywordAct {
 		CmsKeyword[] beans = manager.deleteByIds(ids);
 		for (CmsKeyword bean : beans) {
 			log.info("delete CmsKeyword id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsKeyword.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getName());
 		}
 		return list(request, model);
 	}
@@ -130,6 +136,8 @@ public class CmsKeywordAct {
 		return false;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsKeywordMng manager;
 }

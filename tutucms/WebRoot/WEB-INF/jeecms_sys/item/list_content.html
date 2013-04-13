@@ -45,17 +45,17 @@ function disInput(o) {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "cmsModel.modelContent"/> - <@s.m "global.list"/> - <span style="color:red">${model.name}</span></div>
 	<form class="ropt">
 		<input id="modelId" type="hidden" name="modelId" value="${modelId}"/>
 		<input id="isChannel" type="hidden" name="isChannel" value="${isChannel?string("true","false")}"/>
-		<input type="submit" value="<@s.m "global.add"/>" onclick="this.form.action='v_add.do';"/>
-&nbsp; <input type="submit" value="<@s.m "global.backToList"/>" onclick="backToList(this);"/>
+		<input class="add" type="submit" value="<@s.m "global.add"/>" onclick="this.form.action='v_add.do';"/>
+&nbsp; <input type="submit" value="<@s.m "global.backToList"/>" onclick="backToList(this);" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <form id="tableForm" method="post">
 <input type="hidden" name="modelId" value="${modelId}"/>
 <input type="hidden" name="isChannel" value="${isChannel?string('true','false')}"/>
@@ -610,13 +610,13 @@ function disInput(o) {
 </tbody>
 </table>
 
-<div>
+<div style="margin-top:15px;">
 <#if i gt 1>
-	<input type="button" value="<@s.m "cmsModelItem.savaList"/>" onclick="optSave();"/>
+	<input class="save-default" type="button" value="<@s.m "cmsModelItem.savaList"/>" onclick="optSave();"/>
 &nbsp;<script type="text/javascript">$('#sysDefModel').show();</script>
 </#if>
-<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
-&nbsp; <input type="button" value="<@s.m "cmsModelItem.saveContent"/>" onclick="optSaveOrder();"/>
+<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();" class="del-button"/>
+&nbsp; <input class="save-content" type="button" value="<@s.m "cmsModelItem.saveContent"/>" onclick="optSaveOrder();"/>
 </div>
 
 </form>

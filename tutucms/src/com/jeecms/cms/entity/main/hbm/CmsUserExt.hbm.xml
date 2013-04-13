@@ -15,7 +15,9 @@
 		<property name="qq" column="qq" type="string" not-null="false" length="100"/>
 		<property name="msn" column="msn" type="string" not-null="false" length="100"/>
 		<property name="phone" column="phone" type="string" not-null="false" length="50"/>
-		<property name="moble" column="moble" type="string" not-null="false" length="50"/>
+		<property name="mobile" column="mobile" type="string" not-null="false" length="50"/>
+		<property name="userImg" column="user_img" type="string" not-null="false" length="255"/>
+		<property name="userSignature" column="user_signature" type="string" not-null="false" length="255"/>
 		<one-to-one name="user" class="CmsUser" constrained="true"/>
 	</class>
 </hibernate-mapping>

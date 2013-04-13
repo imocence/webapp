@@ -115,6 +115,12 @@ public abstract class BaseCmsUser  implements Serializable {
 	private java.util.Set<com.jeecms.cms.entity.main.CmsUserSite> userSites;
 	private java.util.Set<com.jeecms.cms.entity.main.CmsRole> roles;
 	private java.util.Set<com.jeecms.cms.entity.main.Channel> channels;
+	private java.util.Set<com.jeecms.cms.entity.main.Content> collectContents;
+	
+	private java.util.Set<com.jeecms.cms.entity.assist.CmsMessage> sendMessages;
+	private java.util.Set<com.jeecms.cms.entity.assist.CmsMessage> receivMessages;
+	private java.util.Set<com.jeecms.cms.entity.assist.CmsReceiverMessage> sendReceiverMessages;
+	private java.util.Set<com.jeecms.cms.entity.assist.CmsReceiverMessage> receivReceiverMessages;
 
 
 
@@ -378,6 +384,7 @@ public abstract class BaseCmsUser  implements Serializable {
 	public void setDisabled (java.lang.Boolean disabled) {
 		this.disabled = disabled;
 	}
+	
 
 
 	/**
@@ -458,8 +465,52 @@ public abstract class BaseCmsUser  implements Serializable {
 	public void setChannels (java.util.Set<com.jeecms.cms.entity.main.Channel> channels) {
 		this.channels = channels;
 	}
+	
 
+	public java.util.Set<com.jeecms.cms.entity.main.Content> getCollectContents() {
+		return collectContents;
+	}
 
+	public void setCollectContents(
+			java.util.Set<com.jeecms.cms.entity.main.Content> collectContents) {
+		this.collectContents = collectContents;
+	}
+	
+	public java.util.Set<com.jeecms.cms.entity.assist.CmsMessage> getSendMessages() {
+		return sendMessages;
+	}
+
+	public void setSendMessages(
+			java.util.Set<com.jeecms.cms.entity.assist.CmsMessage> sendMessages) {
+		this.sendMessages = sendMessages;
+	}
+
+	public java.util.Set<com.jeecms.cms.entity.assist.CmsMessage> getReceivMessages() {
+		return receivMessages;
+	}
+
+	public void setReceivMessages(
+			java.util.Set<com.jeecms.cms.entity.assist.CmsMessage> receivMessages) {
+		this.receivMessages = receivMessages;
+	}
+
+	public java.util.Set<com.jeecms.cms.entity.assist.CmsReceiverMessage> getSendReceiverMessages() {
+		return sendReceiverMessages;
+	}
+
+	public void setSendReceiverMessages(
+			java.util.Set<com.jeecms.cms.entity.assist.CmsReceiverMessage> sendReceiverMessages) {
+		this.sendReceiverMessages = sendReceiverMessages;
+	}
+
+	public java.util.Set<com.jeecms.cms.entity.assist.CmsReceiverMessage> getReceivReceiverMessages() {
+		return receivReceiverMessages;
+	}
+
+	public void setReceivReceiverMessages(
+			java.util.Set<com.jeecms.cms.entity.assist.CmsReceiverMessage> receivReceiverMessages) {
+		this.receivReceiverMessages = receivReceiverMessages;
+	}
 
 	public boolean equals (Object obj) {
 		if (null == obj) return false;

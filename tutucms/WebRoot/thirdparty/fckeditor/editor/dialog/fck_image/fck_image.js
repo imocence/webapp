@@ -468,6 +468,7 @@ function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 			break ;
 		case 202 :
 			//alert( 'Invalid file type' ) ;
+			alert("image");
 			alert( FCKLang.ImgMsgInvalidType );
 			return ;
 		case 203 :

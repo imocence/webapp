@@ -29,14 +29,18 @@
 	<bean id="cms_guestbook_list" class="com.jeecms.cms.action.directive.CmsGuestbookListDirective"/>
 	<bean id="cms_guestbook_page" class="com.jeecms.cms.action.directive.CmsGuestbookPageDirective"/>
 	<bean id="cms_vote" class="com.jeecms.cms.action.directive.CmsVoteDirective"/>
+	<bean id="cms_friendlink_ctg_list" class="com.jeecms.cms.action.directive.CmsFriendlinkCtgListDirective"/>
+	<bean id="cms_friendlink_list" class="com.jeecms.cms.action.directive.CmsFriendlinkListDirective"/>
 	<bean id="cms_lucene_list" class="com.jeecms.cms.lucene.LuceneDirectiveList"/>
 	<bean id="cms_lucene_page" class="com.jeecms.cms.lucene.LuceneDirectivePage"/>
+	<bean id="cms_advertising" class="com.jeecms.cms.action.directive.CmsAdvertisingDirective"/>
 	
 	<!--后台权限标签-->
 	<bean id="cms_perm" class="com.jeecms.cms.web.PermistionDirective"/>
 	
 	<!--SERVICE-->
 	<bean id="contentCountCache" class="com.jeecms.cms.service.ContentCountCacheImpl"/>
+	<bean id="cmsSiteFlowCache" class="com.jeecms.cms.service.CmsSiteFlowCacheImpl"/>
 	<bean id="acquisitionSvc" class="com.jeecms.cms.service.AcquisitionSvcImpl"/>
 	<bean id="luceneContentSvc" class="com.jeecms.cms.lucene.LuceneContentSvcImpl"/>
 	<bean id="staticPageSvc" class="com.jeecms.cms.staticpage.StaticPageSvcImpl">
@@ -66,8 +70,11 @@
 						<entry key="cms_guestbook_list" value-ref="cms_guestbook_list"/>
 						<entry key="cms_guestbook_page" value-ref="cms_guestbook_page"/>
 						<entry key="cms_vote" value-ref="cms_vote"/>
+						<entry key="cms_friendlink_ctg_list" value-ref="cms_friendlink_ctg_list"/>
+						<entry key="cms_friendlink_list" value-ref="cms_friendlink_list"/>
 						<entry key="cms_lucene_list" value-ref="cms_lucene_list"/>
 						<entry key="cms_lucene_page" value-ref="cms_lucene_page"/>
+						<entry key="cms_advertising" value-ref="cms_advertising"/>
 					</map>
 				</property>
 				<property name="templateLoaderPath" value=""/>
@@ -90,6 +97,7 @@
 			</bean>
 		</property>
 	</bean>
+	<bean id="cmsStatistSvc" class="com.jeecms.cms.statistic.CmsStatisticSvcImpl"/>
 	
 	<!--LISTENER-->
 	<bean id="contentLuceneListener" class="com.jeecms.cms.lucene.ContentLuceneListener"/>
@@ -131,8 +139,11 @@
 	<bean id="cmsTopicMng" class="com.jeecms.cms.manager.main.impl.CmsTopicMngImpl"/>
 	<bean id="cmsGroupMng" class="com.jeecms.cms.manager.main.impl.CmsGroupMngImpl"/>
 	<bean id="cmsRoleMng" class="com.jeecms.cms.manager.main.impl.CmsRoleMngImpl"/>
+	<bean id="cmsLogMng" class="com.jeecms.cms.manager.main.impl.CmsLogMngImpl"/>
 	
 	<bean id="cmsAcquisitionMng" class="com.jeecms.cms.manager.assist.impl.CmsAcquisitionMngImpl"/>
+	<bean id="cmsAcquisitionHistoryMng" class="com.jeecms.cms.manager.assist.impl.CmsAcquisitionHistoryMngImpl"/>
+	<bean id="cmsAcquisitionTempMng" class="com.jeecms.cms.manager.assist.impl.CmsAcquisitionTempMngImpl"/>
 	<bean id="cmsCommentMng" class="com.jeecms.cms.manager.assist.impl.CmsCommentMngImpl"/>
 	<bean id="cmsCommentExtMng" class="com.jeecms.cms.manager.assist.impl.CmsCommentExtMngImpl"/>
 	<bean id="cmsKeywordMng" class="com.jeecms.cms.manager.assist.impl.CmsKeywordMngImpl"/>
@@ -144,6 +155,19 @@
 	<bean id="cmsVoteTopicMng" class="com.jeecms.cms.manager.assist.impl.CmsVoteTopicMngImpl"/>
 	<bean id="cmsVoteItemMng" class="com.jeecms.cms.manager.assist.impl.CmsVoteItemMngImpl"/>
 	<bean id="cmsVoteRecordMng" class="com.jeecms.cms.manager.assist.impl.CmsVoteRecordMngImpl"/>
+	<bean id="cmsFriendlinkCtgMng" class="com.jeecms.cms.manager.assist.impl.CmsFriendlinkCtgMngImpl"/>
+	<bean id="cmsFriendlinkMng" class="com.jeecms.cms.manager.assist.impl.CmsFriendlinkMngImpl"/>
+	<bean id="cmsAdvertisingSpaceMng" class="com.jeecms.cms.manager.assist.impl.CmsAdvertisingSpaceMngImpl"/>
+	<bean id="cmsAdvertisingMng" class="com.jeecms.cms.manager.assist.impl.CmsAdvertisingMngImpl"/>
+	<bean id="cmsMessageMng" class="com.jeecms.cms.manager.assist.impl.CmsMessageMngImpl"/>
+	<bean id="cmsReceiverMessageMng" class="com.jeecms.cms.manager.assist.impl.CmsReceiverMessageMngImpl"/>
+	
+	<bean id="cmsSiteFlowMng" class="com.jeecms.cms.manager.assist.impl.CmsSiteFlowMngImpl"/>
+	
+	<bean id="cmsDataMng" class="com.jeecms.cms.manager.assist.impl.CmsDataMngImpl"/>
+	<bean id="cmsDataBackMng" class="com.jeecms.cms.manager.assist.impl.CmsDataBackMngImpl"/>
+	<bean id="cmsFileMngImpl" class="com.jeecms.cms.manager.assist.impl.CmsFileMngImpl"/>
+	<bean id="cmsWorkLoadStatisticSvc" class="com.jeecms.cms.statistic.workload.CmsWorkLoadStatisticSvcImpl"/>
 	
 	<!--DAO-->
 	<bean id="channelDao" class="com.jeecms.cms.dao.main.impl.ChannelDaoImpl"/>
@@ -166,8 +190,11 @@
 	<bean id="cmsTopicDao" class="com.jeecms.cms.dao.main.impl.CmsTopicDaoImpl"/>
 	<bean id="cmsGroupDao" class="com.jeecms.cms.dao.main.impl.CmsGroupDaoImpl"/>
 	<bean id="cmsRoleDao" class="com.jeecms.cms.dao.main.impl.CmsRoleDaoImpl"/>
+	<bean id="cmsLogDao" class="com.jeecms.cms.dao.main.impl.CmsLogDaoImpl"/>
 	
 	<bean id="cmsAcquisitionDao" class="com.jeecms.cms.dao.assist.impl.CmsAcquisitionDaoImpl"/>
+	<bean id="cmsAcquisitionHistoryDao" class="com.jeecms.cms.dao.assist.impl.CmsAcquisitionHistoryDaoImpl"/>
+	<bean id="cmsAcquisitionTempDao" class="com.jeecms.cms.dao.assist.impl.CmsAcquisitionTempDaoImpl"/>
 	<bean id="cmsCommentDao" class="com.jeecms.cms.dao.assist.impl.CmsCommentDaoImpl"/>
 	<bean id="cmsCommentExtDao" class="com.jeecms.cms.dao.assist.impl.CmsCommentExtDaoImpl"/>
 	<bean id="cmsKeywordDao" class="com.jeecms.cms.dao.assist.impl.CmsKeywordDaoImpl"/>
@@ -178,7 +205,22 @@
 	<bean id="cmsVoteTopicDao" class="com.jeecms.cms.dao.assist.impl.CmsVoteTopicDaoImpl"/>
 	<bean id="cmsVoteItemDao" class="com.jeecms.cms.dao.assist.impl.CmsVoteItemDaoImpl"/>
 	<bean id="cmsVoteRecordDao" class="com.jeecms.cms.dao.assist.impl.CmsVoteRecordDaoImpl"/>
+	<bean id="cmsFriendlinkCtgDao" class="com.jeecms.cms.dao.assist.impl.CmsFriendlinkCtgDaoImpl"/>
+	<bean id="cmsFriendlinkDao" class="com.jeecms.cms.dao.assist.impl.CmsFriendlinkDaoImpl"/>
+	<bean id="cmsAdvertisingSpaceDao" class="com.jeecms.cms.dao.assist.impl.CmsAdvertisingSpaceDaoImpl"/>
+	<bean id="cmsAdvertisingDao" class="com.jeecms.cms.dao.assist.impl.CmsAdvertisingDaoImpl"/>
+	<bean id="cmsMessageDao" class="com.jeecms.cms.dao.assist.impl.CmsMessageDaoImpl"/>
+	<bean id="cmsReceiverMessageDao" class="com.jeecms.cms.dao.assist.impl.CmsReceiverMessageDaoImpl"/>
 	
 	<bean id="luceneContentDao" class="com.jeecms.cms.lucene.LuceneContentDaoImpl"/>
 	<bean id="staticPageDao" class="com.jeecms.cms.staticpage.StaticPageDaoImpl"/>
+	<bean id="cmsStatisticDao" class="com.jeecms.cms.statistic.CmsStatisticDaoImpl"/>
+	
+	<bean id="cmsSiteFlowDao" class="com.jeecms.cms.dao.assist.impl.CmsSiteFlowDaoImpl"/>
+	
+	<bean id="cmsDataDaoBack" class="com.jeecms.cms.dao.assist.impl.CmsDataBackDaoImpl">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<bean id="cmsFileDaoImpl" class="com.jeecms.cms.dao.assist.impl.CmsFileDaoImpl"/>
+	<bean id="cmsWorkLoadStatisticDao" class="com.jeecms.cms.statistic.workload.CmsWorkLoadStatisticDaoImpl"/>
 </beans>

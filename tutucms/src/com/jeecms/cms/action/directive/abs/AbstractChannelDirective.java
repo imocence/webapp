@@ -14,7 +14,7 @@ import freemarker.template.TemplateModel;
 /**
  * 内容标签基类
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public abstract class AbstractChannelDirective implements

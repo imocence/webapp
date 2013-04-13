@@ -2,10 +2,12 @@ package com.jeecms.cms.action.admin.assist;
 
 import static com.jeecms.common.page.SimplePage.cpn;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import com.jeecms.cms.entity.assist.CmsGuestbookExt;
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.manager.assist.CmsGuestbookCtgMng;
 import com.jeecms.cms.manager.assist.CmsGuestbookMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
 import com.jeecms.common.page.Pagination;
@@ -35,7 +38,7 @@ public class CmsGuestbookAct {
 			Boolean queryChecked, Integer pageNo, HttpServletRequest request,
 			ModelMap model) {
 		CmsSite site = CmsUtils.getSite(request);
-		Pagination pagination = manager.getPage(site.getId(), queryCtgId,
+		Pagination pagination = manager.getPage(site.getId(), queryCtgId,null,
 				queryRecommend, queryChecked, true, false, cpn(pageNo),
 				CookieUtils.getPageSize(request));
 		model.addAttribute("pagination", pagination);
@@ -80,20 +83,35 @@ public class CmsGuestbookAct {
 		String ip = RequestUtils.getIpAddr(request);
 		bean = manager.save(bean, ext, ctgId, ip);
 		log.info("save CmsGuestbook id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsGuestbook.log.save", "id="
+				+ bean.getId() + ";title=" + bean.getTitle());
 		return "redirect:v_list.do";
 	}
 
 	@RequestMapping("/guestbook/o_update.do")
 	public String update(Integer queryCtgId, Boolean queryRecommend,
-			Boolean queryChecked, CmsGuestbook bean, CmsGuestbookExt ext,
+			Boolean queryChecked, String oldreply,CmsGuestbook bean, CmsGuestbookExt ext,
 			Integer ctgId, Integer pageNo, HttpServletRequest request,
 			ModelMap model) {
 		WebErrors errors = validateUpdate(bean.getId(), request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
+		Date now=new Date();
+		if(StringUtils.isNotBlank(ext.getReply())&&!oldreply.equals(ext.getReply())){
+			bean.setReplayTime(now);
+			if(bean.getAdmin()!=null){
+				if(!bean.getAdmin().equals(CmsUtils.getUser(request))){
+					bean.setAdmin(CmsUtils.getUser(request));
+				}
+			}else{
+				bean.setAdmin(CmsUtils.getUser(request));
+			}
+		}
 		bean = manager.update(bean, ext, ctgId);
 		log.info("update CmsGuestbook id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsGuestbook.log.update", "id="
+				+ bean.getId() + ";title=" + bean.getTitle());
 		return list(queryCtgId, queryRecommend, queryChecked, pageNo, request,
 				model);
 	}
@@ -109,6 +127,8 @@ public class CmsGuestbookAct {
 		CmsGuestbook[] beans = manager.deleteByIds(ids);
 		for (CmsGuestbook bean : beans) {
 			log.info("delete CmsGuestbook id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsGuestbook.log.delete", "id="
+					+ bean.getId() + ";title=" + bean.getTitle());
 		}
 		return list(queryCtgId, queryRecommend, queryChecked, pageNo, request,
 				model);
@@ -168,7 +188,8 @@ public class CmsGuestbookAct {
 
 	@Autowired
 	private CmsGuestbookCtgMng cmsGuestbookCtgMng;
-
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsGuestbookMng manager;
 }

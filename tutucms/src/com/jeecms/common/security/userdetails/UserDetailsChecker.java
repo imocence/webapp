@@ -15,7 +15,7 @@ import com.jeecms.common.security.AccountStatusException;
  * any authentication decisions based on a submitted authentication request.
  * 
  * @author Luke Taylor
- * @version $Id: UserDetailsChecker.java,v 1.1 2010/03/23 06:30:36 coco Exp $
+ * @version $Id: UserDetailsChecker.java,v 1.1 2011/12/06 01:36:08 administrator Exp $
  * @since 2.0
  * 
  * @see org.springframework.security.authentication.AccountStatusUserDetailsChecker

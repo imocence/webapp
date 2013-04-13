@@ -28,14 +28,14 @@ function optPriority() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "cmsTopic.function"/> - <@s.m "global.list"/></div>
 	<form class="ropt">
-		<input type="submit" value="<@s.m "global.add"/>" onclick="this.form.action='v_add.do';"/>
+		<input class="add" type="submit" value="<@s.m "global.add"/>" onclick="this.form.action='v_add.do';"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <form id="tableForm" method="post">
 <input type="hidden" name="pageNo" value="${pageNo!}"/>
 <@p.table value=pagination;cmsTopic,i,has_next><#rt/>
@@ -61,9 +61,9 @@ function optPriority() {
 		<a href="o_delete.do?ids=${cmsTopic.id}&pageNo=${pageNo!}" onclick="if(!confirm('<@s.m "global.confirm.delete"/>')) {return false;}" class="pn-opt"><@s.m "global.delete"/></a><#t/>
 	</@p.column><#t/>
 </@p.table>
-<div>
-	<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
-&nbsp; <input type="button" value="<@s.m "global.saveOrder"/>" onclick="optPriority();"/>
+<div  style="margin-top:15px;">
+	<input class="del-button" type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
+&nbsp; <input class="save-order" type="button" value="<@s.m "global.saveOrder"/>" onclick="optPriority();"/>
 </div>
 </form>
 </div>

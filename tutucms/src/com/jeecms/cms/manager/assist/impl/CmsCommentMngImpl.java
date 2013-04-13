@@ -39,6 +39,18 @@ public class CmsCommentMngImpl implements CmsCommentMng {
 				recommend, desc, pageNo, pageSize, true);
 		return page;
 	}
+	public Pagination getPageForMember(Integer siteId, Integer contentId,Integer toUserId,Integer fromUserId,
+			Integer greaterThen, Boolean checked, Boolean recommend,
+			boolean desc, int pageNo, int pageSize){
+		Pagination page = dao.getPageForMember(siteId, contentId,toUserId,fromUserId, greaterThen, checked,
+				recommend, desc, pageNo, pageSize, false);
+		return page;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<CmsComment> getListForDel(Integer siteId, Integer userId,Integer commentUserId,String ip){
+		return dao.getListForDel(siteId,userId,commentUserId,ip);
+	}
 
 	@Transactional(readOnly = true)
 	public List<CmsComment> getListForTag(Integer siteId, Integer contentId,

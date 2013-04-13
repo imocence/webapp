@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.jeecms.cms.entity.assist.CmsComment;
 import com.jeecms.cms.entity.main.Channel.AfterCheckEnum;
 import com.jeecms.cms.entity.main.base.BaseContent;
 import com.jeecms.cms.staticpage.StaticPageUtils;
@@ -25,7 +26,7 @@ public class Content extends BaseContent implements ContentInterface {
 	/**
 	 * 状态
 	 * 
-	 * @author coco
+	 * @author liufang
 	 * 
 	 */
 	public enum ContentStatus {
@@ -82,7 +83,7 @@ public class Content extends BaseContent implements ContentInterface {
 		if (getStaticContent()) {
 			return getUrlStatic(false, 1);
 		} else {
-			return getUrlDynamic(false);
+			return getUrlDynamic(null);
 		}
 	}
 
@@ -668,6 +669,22 @@ public class Content extends BaseContent implements ContentInterface {
 			return null;
 		}
 	}
+	
+	public Boolean getNeedRegenerate() {
+		ContentExt ext = getContentExt();
+		if (ext != null) {
+			return ext.getNeedRegenerate();
+		} else {
+			return null;
+		}
+	}
+	
+	public void setNeedRegenerate(Boolean isNeed) {
+		ContentExt ext = getContentExt();
+		if (ext != null) {
+			ext.setNeedRegenerate(isNeed);
+		}
+	}
 
 	public String getTxt() {
 		ContentTxt txt = getContentTxt();
@@ -714,12 +731,27 @@ public class Content extends BaseContent implements ContentInterface {
 		}
 	}
 
-	public Integer getComments() {
+	public Integer getCommentsCount() {
 		ContentCount count = getContentCount();
 		if (count != null) {
 			return count.getComments();
 		} else {
 			return null;
+		}
+	}
+	
+	public Integer getCommentsCheckedNum() {
+		Set<CmsComment> comments = getComments();
+		int num=0;
+		if (comments != null) {
+			for(CmsComment comment:comments){
+				if(comment.getChecked()){
+					num++;
+				}
+			}
+			return num;
+		} else {
+			return 0;
 		}
 	}
 
@@ -841,6 +873,10 @@ public class Content extends BaseContent implements ContentInterface {
 
 	public Boolean getTarget() {
 		return null;
+	}
+	
+	public void clear(){
+		getCollectUsers().clear();
 	}
 
 	/* [CONSTRUCTOR MARKER BEGIN] */

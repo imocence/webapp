@@ -6,7 +6,7 @@ import com.jeecms.cms.entity.main.CmsUser;
 /**
  * CMS线程变量
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class CmsThreadVariable {

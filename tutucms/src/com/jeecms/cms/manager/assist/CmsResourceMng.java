@@ -13,7 +13,7 @@ import com.jeecms.common.util.Zipper.FileEntry;
 /**
  * 模板资源管理接口
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface CmsResourceMng {
@@ -27,6 +27,10 @@ public interface CmsResourceMng {
 	 * @return
 	 */
 	public List<FileWrap> listFile(String path, boolean dirAndEditable);
+	
+	public List<FileWrap> listFileValid(String path, boolean dirAndEditable);
+	
+	public List<FileWrap> queryFiles(String path, Boolean valid);
 
 	/**
 	 * 保存文件

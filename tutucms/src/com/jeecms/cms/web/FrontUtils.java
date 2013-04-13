@@ -41,7 +41,7 @@ import freemarker.template.TemplateNumberModel;
 /**
  * 前台工具类
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class FrontUtils {
@@ -424,14 +424,14 @@ public class FrontUtils {
 	 * 标签参数中获得条数。
 	 * 
 	 * @param params
-	 * @return 如果不存在，或者小于等于0，或者大于2000则返回2000；否则返回条数。
+	 * @return 如果不存在，或者小于等于0，或者大于5000则返回5000；否则返回条数。
 	 * @throws TemplateException
 	 */
 	public static int getCount(Map<String, TemplateModel> params)
 			throws TemplateException {
 		Integer count = DirectiveUtils.getInt(COUNT, params);
-		if (count == null || count <= 0 || count >= 2000) {
-			return 2000;
+		if (count == null || count <= 0 || count >= 5000) {
+			return 5000;
 		} else {
 			return count;
 		}

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.entity.main.ContentType;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.ContentTypeMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
@@ -54,6 +55,8 @@ public class ContentTypeAct {
 		}
 		bean = manager.save(bean);
 		log.info("save ContentType id={}", bean.getId());
+		cmsLogMng.operating(request, "contentType.log.save", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return "redirect:v_list.do";
 	}
 
@@ -66,6 +69,8 @@ public class ContentTypeAct {
 		}
 		bean = manager.update(bean);
 		log.info("update ContentType id={}.", bean.getId());
+		cmsLogMng.operating(request, "contentType.log.update", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return list(pageNo, request, model);
 	}
 
@@ -79,6 +84,8 @@ public class ContentTypeAct {
 		ContentType[] beans = manager.deleteByIds(ids);
 		for (ContentType bean : beans) {
 			log.info("delete ContentType id={}", bean.getId());
+			cmsLogMng.operating(request, "contentType.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getName());
 		}
 		return list(pageNo, request, model);
 	}
@@ -127,6 +134,8 @@ public class ContentTypeAct {
 		return false;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private ContentTypeMng manager;
 }

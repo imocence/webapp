@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jeecms.cms.dao.assist.CmsAcquisitionDao;
 import com.jeecms.cms.entity.assist.CmsAcquisition;
+import com.jeecms.cms.entity.assist.CmsAcquisitionHistory;
+import com.jeecms.cms.entity.assist.CmsAcquisitionTemp;
+import com.jeecms.cms.entity.assist.CmsAcquisition.AcquisitionResultType;
 import com.jeecms.cms.entity.main.Content;
 import com.jeecms.cms.entity.main.ContentExt;
 import com.jeecms.cms.entity.main.ContentTxt;
@@ -30,7 +33,7 @@ public class CmsAcquisitionMngImpl implements CmsAcquisitionMng,
 		return dao.getList(siteId);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public CmsAcquisition findById(Integer id) {
 		CmsAcquisition entity = dao.findById(id);
 		return entity;
@@ -149,7 +152,9 @@ public class CmsAcquisitionMngImpl implements CmsAcquisitionMng,
 		return beans;
 	}
 
-	public Content saveContent(String title, String txt, Integer acquId) {
+	public Content saveContent(String title, String txt, Integer acquId,
+			AcquisitionResultType resultType, CmsAcquisitionTemp temp,
+			CmsAcquisitionHistory history) {
 		CmsAcquisition acqu = findById(acquId);
 		Content c = new Content();
 		c.setSite(acqu.getSite());
@@ -157,9 +162,15 @@ public class CmsAcquisitionMngImpl implements CmsAcquisitionMng,
 		ContentTxt ctxt = new ContentTxt();
 		cext.setTitle(title);
 		ctxt.setTxt(txt);
-		return contentMng.save(c, cext, ctxt, null, null, null, null, null,
-				null, null, null, null, acqu.getChannel().getId(), acqu
-						.getType().getId(), false, acqu.getUser(), false);
+		Content content = contentMng.save(c, cext, ctxt, null, null, null,
+				null, null, null, null, null, null, acqu.getChannel().getId(),
+				acqu.getType().getId(), false, acqu.getUser(), false);
+		history.setTitle(title);
+		history.setContent(content);
+		history.setDescription(resultType.name());
+		temp.setTitle(title);
+		temp.setDescription(resultType.name());
+		return content;
 	}
 
 	public String checkForChannelDelete(Integer channelId) {
@@ -168,6 +179,50 @@ public class CmsAcquisitionMngImpl implements CmsAcquisitionMng,
 		} else {
 			return null;
 		}
+	}
+
+	public CmsAcquisition getStarted(Integer siteId) {
+		return dao.getStarted(siteId);
+	}
+
+	public Integer hasStarted(Integer siteId) {
+		return getStarted(siteId) == null ? 0 : getMaxQueue(siteId) + 1;
+	}
+
+	public Integer getMaxQueue(Integer siteId) {
+		return dao.getMaxQueue(siteId);
+	}
+
+	public void addToQueue(Integer[] ids, Integer queueNum) {
+		for (Integer id : ids) {
+			CmsAcquisition acqu = findById(id);
+			if (acqu.getStatus() == CmsAcquisition.START || acqu.getQueue() > 0) {
+				continue;
+			}
+			acqu.setQueue(queueNum++);
+		}
+	}
+
+	public void cancel(Integer siteId, Integer id) {
+		CmsAcquisition acqu = findById(id);
+		Integer queue = acqu.getQueue();
+		for (CmsAcquisition c : getLargerQueues(siteId, queue)) {
+			c.setQueue(c.getQueue() - 1);
+		}
+		acqu.setQueue(0);
+	}
+
+	public List<CmsAcquisition> getLargerQueues(Integer siteId, Integer queueNum) {
+		return dao.getLargerQueues(siteId, queueNum);
+	}
+
+	public CmsAcquisition popAcquFromQueue(Integer siteId) {
+		CmsAcquisition acquisition = dao.popAcquFromQueue(siteId);
+		if (acquisition != null) {
+			Integer id = acquisition.getId();
+			cancel(siteId, id);
+		}
+		return acquisition;
 	}
 
 	private ChannelMng channelMng;

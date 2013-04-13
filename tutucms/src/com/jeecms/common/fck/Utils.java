@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 /**
  * Static helper methods for strings.
  * 
- * @version $Id: Utils.java,v 1.1 2010/03/23 06:30:36 coco Exp $
+ * @version $Id: Utils.java,v 1.1 2011/12/06 01:36:06 administrator Exp $
  */
 public class Utils {
 

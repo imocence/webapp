@@ -42,6 +42,21 @@ public class CmsUserSiteMngImpl implements CmsUserSiteMng {
 		return bean;
 	}
 
+	public void updateByUser(CmsUser user, Integer siteId, Byte step,
+			Boolean allChannel) {
+		Set<CmsUserSite> uss = user.getUserSites();
+		if (siteId == null || step == null || allChannel == null) {
+			return;
+		}
+		// 只更新单站点信息
+		for (CmsUserSite us : uss) {
+			if (siteId.equals(us.getSite().getId())) {
+				us.setCheckStep(step);
+				us.setAllChannel(allChannel);
+			}
+		}
+	}
+
 	public void updateByUser(CmsUser user, Integer[] siteIds, Byte[] steps,
 			Boolean[] allChannels) {
 		Set<CmsUserSite> uss = user.getUserSites();
@@ -56,11 +71,11 @@ public class CmsUserSiteMngImpl implements CmsUserSiteMng {
 		// 先删除、更新
 		Set<CmsUserSite> toDel = new HashSet<CmsUserSite>();
 		boolean contains;
-		int i = 0;
+		int i;
 		for (CmsUserSite us : uss) {
 			contains = false;
-			for (Integer sid : siteIds) {
-				if (sid.equals(us.getSite().getId())) {
+			for (i = 0; i < siteIds.length; i++) {
+				if (siteIds[i].equals(us.getSite().getId())) {
 					contains = true;
 					break;
 				}
@@ -71,7 +86,6 @@ public class CmsUserSiteMngImpl implements CmsUserSiteMng {
 			} else {
 				toDel.add(us);
 			}
-			i++;
 		}
 		delete(toDel, uss);
 		// 再增加

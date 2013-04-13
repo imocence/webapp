@@ -11,14 +11,14 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>:  <@s.m "contentType.function"/> - <@s.m "global.edit"/></div>
 	<form class="ropt">
-		<input type="button" value="<@s.m "global.backToList"/>" onclick="history.back();"/>
+		<input class="return-button" type="button" value="<@s.m "global.backToList"/>" onclick="history.back();"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_update.do" labelWidth="12">
 <@p.td colspan="1" width="50" label="contentType.id">${contentType.id}</@p.td>
 <@p.text colspan="1" width="50" label="contentType.name" name="name" value=contentType.name required="true" class="required" maxlength="150"/><@p.tr/>

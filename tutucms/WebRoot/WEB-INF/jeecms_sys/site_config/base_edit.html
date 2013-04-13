@@ -11,12 +11,12 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>:  <@s.m "cmsSiteConfig.function"/> - <@s.m "cmsSiteConfig.function.base"/> - <@s.m "global.edit"/></div>
 	<#include "inc_opt.html"/>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_base_update.do" labelWidth="12">
 <@p.text colspan="1" width="50" label="cmsSite.name" name="name" value=cmsSite.name style="width:260px" required="true" class="required" maxlength="100"/>
 <@p.text colspan="1" width="50" label="cmsSite.shortName" name="shortName" value=cmsSite.shortName required="true" class="required" maxlength="100"/><@p.tr/>

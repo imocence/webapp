@@ -12,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.jeecms.cms.entity.main.CmsSite;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsSiteMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
@@ -44,6 +45,7 @@ public class CmsSiteConfigAct {
 		bean = manager.update(bean, uploadFtpId);
 		model.addAttribute("message", "global.success");
 		log.info("update CmsSite success. id={}", site.getId());
+		cmsLogMng.operating(request, "cmsSiteConfig.log.updateBase", null);
 		return baseEdit(request, model);
 	}
 
@@ -54,7 +56,9 @@ public class CmsSiteConfigAct {
 	}
 
 	@Autowired
-	private CmsSiteMng manager;
-	@Autowired
 	private FtpMng ftpMng;
+	@Autowired
+	private CmsLogMng cmsLogMng;
+	@Autowired
+	private CmsSiteMng manager;
 }

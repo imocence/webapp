@@ -17,4 +17,12 @@ public interface CmsAcquisitionDao {
 	public CmsAcquisition deleteById(Integer id);
 
 	public int countByChannelId(Integer channelId);
+
+	public CmsAcquisition getStarted(Integer siteId);
+
+	public Integer getMaxQueue(Integer siteId);
+
+	public List<CmsAcquisition> getLargerQueues(Integer siteId, Integer queueNum);
+
+	public CmsAcquisition popAcquFromQueue(Integer siteId);
 }

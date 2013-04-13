@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.jeecms.cms.entity.assist.CmsGuestbookCtg;
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.manager.assist.CmsGuestbookCtgMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
 
@@ -57,6 +58,8 @@ public class CmsGuestbookCtgAct {
 		}
 		bean = manager.save(bean);
 		log.info("save CmsGuestbookCtg id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsGuestbookCtg.log.save", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return "redirect:v_list.do";
 	}
 
@@ -69,6 +72,8 @@ public class CmsGuestbookCtgAct {
 		}
 		bean = manager.update(bean);
 		log.info("update CmsGuestbookCtg id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsGuestbookCtg.log.update", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return list(pageNo, request, model);
 	}
 
@@ -82,6 +87,8 @@ public class CmsGuestbookCtgAct {
 		CmsGuestbookCtg[] beans = manager.deleteByIds(ids);
 		for (CmsGuestbookCtg bean : beans) {
 			log.info("delete CmsGuestbookCtg id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsGuestbookCtg.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getName());
 		}
 		return list(pageNo, request, model);
 	}
@@ -139,6 +146,8 @@ public class CmsGuestbookCtgAct {
 		return false;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsGuestbookCtgMng manager;
 }

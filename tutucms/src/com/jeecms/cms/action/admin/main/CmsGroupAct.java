@@ -3,6 +3,7 @@ package com.jeecms.cms.action.admin.main;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.jeecms.cms.entity.main.Channel;
 import com.jeecms.cms.entity.main.CmsGroup;
+import com.jeecms.cms.entity.main.CmsSite;
+import com.jeecms.cms.entity.main.CmsUser;
+import com.jeecms.cms.manager.main.ChannelMng;
 import com.jeecms.cms.manager.main.CmsGroupMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
+import com.jeecms.cms.manager.main.CmsSiteMng;
+import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
 
 @Controller
@@ -28,7 +36,9 @@ public class CmsGroupAct {
 	}
 
 	@RequestMapping("/group/v_add.do")
-	public String add(ModelMap model) {
+	public String add(HttpServletRequest request,ModelMap model) {
+		List<CmsSite> siteList = cmsSiteMng.getList();
+		model.addAttribute("siteList", siteList);
 		return "group/add";
 	}
 
@@ -38,30 +48,37 @@ public class CmsGroupAct {
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
+		List<CmsSite> siteList = cmsSiteMng.getList();
+		model.addAttribute("siteList", siteList);
 		model.addAttribute("cmsGroup", manager.findById(id));
 		return "group/edit";
 	}
 
 	@RequestMapping("/group/o_save.do")
-	public String save(CmsGroup bean, HttpServletRequest request, ModelMap model) {
+	public String save(CmsGroup bean,  Integer[] viewGroupIds, Integer[] contriGroupIds,
+		HttpServletRequest request, ModelMap model) {
 		WebErrors errors = validateSave(bean, request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
-		bean = manager.save(bean);
+		bean = manager.save(bean,viewGroupIds,contriGroupIds);
 		log.info("save CmsGroup id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsGroup.log.save", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return "redirect:v_list.do";
 	}
 
 	@RequestMapping("/group/o_update.do")
-	public String update(CmsGroup bean, HttpServletRequest request,
-			ModelMap model) {
+	public String update(CmsGroup bean, Integer[] viewGroupIds, Integer[] contriGroupIds,
+			HttpServletRequest request,ModelMap model) {
 		WebErrors errors = validateUpdate(bean.getId(), request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
-		bean = manager.update(bean);
+		bean = manager.update(bean,viewGroupIds,contriGroupIds);
 		log.info("update CmsGroup id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsGroup.log.update", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return list(request, model);
 	}
 
@@ -75,6 +92,8 @@ public class CmsGroupAct {
 		CmsGroup[] beans = manager.deleteByIds(ids);
 		for (CmsGroup bean : beans) {
 			log.info("delete CmsGroup id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsGroup.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getName());
 		}
 		return list(request, model);
 	}
@@ -90,6 +109,44 @@ public class CmsGroupAct {
 		manager.updateRegDef(regDefId);
 		model.addAttribute("message", "global.success");
 		return list(request, model);
+	}
+	
+	@RequestMapping(value = "/group/v_channels_add.do")
+	public String channelsAdd(Integer siteId, HttpServletRequest request,
+			HttpServletResponse response, ModelMap model) {
+		return channelsAddJson(siteId, request, response, model);
+	}
+
+	@RequestMapping(value = "/group/v_channels_edit.do")
+	public String channelsEdit(Integer groupId, Integer siteId,Integer type,
+			HttpServletRequest request, HttpServletResponse response,
+			ModelMap model) {
+		return channelsEditJson(groupId, siteId,type, request, response, model);
+	}
+	private String channelsAddJson(Integer siteId,
+			HttpServletRequest request, HttpServletResponse response,
+			ModelMap model) {
+		List<Channel> channelList = channelMng.getTopList(siteId, false);
+		model.addAttribute("channelList", channelList);
+		response.setHeader("Cache-Control", "no-cache");
+		response.setContentType("text/json;charset=UTF-8");
+		return "group/channels_add";
+	}
+
+	private String channelsEditJson(Integer groupId, Integer siteId,Integer type,
+			HttpServletRequest request, HttpServletResponse response,
+			ModelMap model) {
+		List<Channel> channelList = channelMng.getTopList(siteId, false);
+		CmsGroup group = manager.findById(groupId);
+		model.addAttribute("channelList", channelList);
+		if(type.equals(1)){
+			model.addAttribute("channelIds", group.getViewChannelIds(siteId));
+		}else{
+			model.addAttribute("channelIds", group.getContriChannelIds(siteId));
+		}
+		response.setHeader("Cache-Control", "no-cache");
+		response.setContentType("text/json;charset=UTF-8");
+		return "group/channels_edit";
 	}
 
 	private WebErrors validateSave(CmsGroup bean, HttpServletRequest request) {
@@ -160,5 +217,11 @@ public class CmsGroupAct {
 	}
 
 	@Autowired
+	private CmsLogMng cmsLogMng;
+	@Autowired
 	private CmsGroupMng manager;
+	@Autowired
+	private ChannelMng channelMng;
+	@Autowired
+	protected CmsSiteMng cmsSiteMng;
 }

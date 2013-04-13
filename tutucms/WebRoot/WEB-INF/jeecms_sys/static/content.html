@@ -44,18 +44,18 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "cmsStatic.function"/> - <@s.m "cmsStatic.content"/></div>
 	<form class="ropt">
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_content.do">
 <@p.select label="cmsStatic.channel" name="channelId" list=channelList listKey="id" listValue="name" listDeep="deep" headerKey="" headerValue="cmsStatic.allChannel"/>
 <@p.text label="cmsStatic.startDate" name="startDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="Wdate"/>
 <@p.td>
-	<input id="createButton" type="submit" value="<@s.m "cmsStatic.contentStatic"/>"/>
+	<input class="generate-content-page" id="createButton" type="submit" value="<@s.m "cmsStatic.contentStatic"/>"/>
 </@p.td>
 </@p.form>
 </div>

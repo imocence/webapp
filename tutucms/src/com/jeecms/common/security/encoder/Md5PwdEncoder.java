@@ -9,7 +9,7 @@ import org.apache.commons.codec.binary.Hex;
 /**
  * MD5密码加密
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class Md5PwdEncoder implements PwdEncoder {
@@ -106,9 +106,9 @@ public class Md5PwdEncoder implements PwdEncoder {
 	/**
 	 * 设置混淆码
 	 * 
-	 * @param salt
+	 * @param defaultSalt
 	 */
-	public void setSefaultSalt(String defaultSalt) {
+	public void setDefaultSalt(String defaultSalt) {
 		this.defaultSalt = defaultSalt;
 	}
 }

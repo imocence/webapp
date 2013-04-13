@@ -15,4 +15,7 @@
 		<property name="recommend" column="is_recommend" type="java.lang.Boolean" not-null="true"/>
 		<many-to-one name="channel" column="channel_id" class="Channel" not-null="false"></many-to-one>
 	</class>
+	<sql-query name="CmsTopic.deleteContentRef">
+		delete from jc_content_topic where topic_id=?
+	</sql-query>
 </hibernate-mapping>

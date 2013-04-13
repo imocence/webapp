@@ -7,11 +7,12 @@ import org.htmlparser.Node;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.nodes.TextNode;
 import org.htmlparser.util.ParserException;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * 字符串的帮助类，提供静态方法，不可以实例化。
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class StrUtils {
@@ -204,4 +205,32 @@ public class StrUtils {
 		Pattern p = Pattern.compile(reg);
 		return p.matcher(str).matches();
 	}
+
+	public static boolean containsKeyString(String str) {
+		if (StringUtils.isBlank(str)) {
+			return false;
+		}
+		if (str.contains("'") || str.contains("\"") || str.contains("\r")
+				|| str.contains("\n") || str.contains("\t")
+				|| str.contains("\b") || str.contains("\f")) {
+			return true;
+		}
+		return false;
+	}
+
+	// 将""和'转义
+	public static String replaceKeyString(String str) {
+		if (containsKeyString(str)) {
+			return str.replace("'", "\\'").replace("\"", "\\\"").replace("\r",
+					"\\r").replace("\n", "\\n").replace("\t", "\\t").replace(
+					"\b", "\\b").replace("\f", "\\f");
+		} else {
+			return str;
+		}
+	}
+
+	public static void main(String args[]) {
+		System.out.println(replaceKeyString("&nbsp;\r" + "</p>"));
+	}
+
 }

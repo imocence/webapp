@@ -85,14 +85,17 @@ public class StaticPageDaoImpl extends HibernateSimpleDao implements
 			}
 			// 没有内容或者有子栏目，则只生成一页
 			int childs = childsOfChannel(c.getId());
-			if (!c.getModel().getHasContent()
-					|| (!c.getListChild() && childs > 0)) {
+			if (!c.getModel().getHasContent()) {
 				totalPage = 1;
 			} else {
 				if (c.getListChild()) {
 					quantity = childs;
 				} else {
-					quantity = contentsOfChannel(c.getId());
+					if(!c.getListChild() && childs > 0){
+						quantity=contentsOfParentChannel(c.getId());
+					}else{
+						quantity = contentsOfChannel(c.getId());
+					}
 				}
 				if (quantity <= 0) {
 					totalPage = 1;
@@ -206,6 +209,16 @@ public class StaticPageDaoImpl extends HibernateSimpleDao implements
 		query.setParameter("channelId", channelId);
 		return ((Number) query.iterate().next()).intValue();
 	}
+	
+	public int contentsOfParentChannel(Integer channelId) {
+		String hql = "select count(*) from Content bean"
+				+ " join bean.channel channel,Channel parent"
+				+ "  where channel.lft between parent.lft and parent.rgt and channel.site.id=parent.site.id and parent.id=:parentId and bean.status="
+				+ ContentCheck.CHECKED;
+		Query query = getSession().createQuery(hql);
+		query.setParameter("parentId", channelId);
+		return ((Number) query.iterate().next()).intValue();
+	}
 
 	public int childsOfChannel(Integer channelId) {
 		String hql = "select count(*) from Channel bean"
@@ -259,6 +272,10 @@ public class StaticPageDaoImpl extends HibernateSimpleDao implements
 			if (!StringUtils.isBlank(c.getLink()) || !chnl.getStaticContent()) {
 				continue;
 			}
+			// 如果不需要生成静态页面，则不生成
+			if(!c.getNeedRegenerate()){
+				continue;
+			}
 			site = c.getSite();
 			tpl = conf.getTemplate(c.getTplContentOrDef());
 			FrontUtils.frontData(data, site, null, null, null);
@@ -304,19 +321,24 @@ public class StaticPageDaoImpl extends HibernateSimpleDao implements
 					}
 				}
 			}
+			c.setNeedRegenerate(false);
 			if (++count % 20 == 0) {
 				session.clear();
 			}
 		}
 		return count;
 	}
-
-	public void contentStatic(Content c, Configuration conf,
+	
+	public boolean contentStatic(Content c, Configuration conf,
 			Map<String, Object> data) throws IOException, TemplateException {
 		// 如果是外部链接或者不生成静态页面，则不生成
 		Channel chnl = c.getChannel();
 		if (!StringUtils.isBlank(c.getLink()) || !chnl.getStaticContent()) {
-			return;
+			return false;
+		}
+		// 如果不需要生成静态页面，则不生成
+		if(!c.getNeedRegenerate()){
+			return false;
 		}
 		if (data == null) {
 			data = new HashMap<String, Object>();
@@ -368,6 +390,8 @@ public class StaticPageDaoImpl extends HibernateSimpleDao implements
 				}
 			}
 		}
+		c.setNeedRegenerate(false);
+		return true;
 	}
 
 	private CmsKeywordMng cmsKeywordMng;

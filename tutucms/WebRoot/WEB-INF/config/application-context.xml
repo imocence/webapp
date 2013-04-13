@@ -41,8 +41,8 @@
 		<property name="hibernateProperties">
 			<value>
 			hibernate.dialect=org.hibernate.dialect.MySQLInnoDBDialect
-			hibernate.show_sql=true
-			hibernate.format_sql=true
+			hibernate.show_sql=false
+			hibernate.format_sql=false
 			hibernate.query.substitutions=true 1, false 0
 			hibernate.jdbc.batch_size=20
 			hibernate.cache.use_query_cache=true
@@ -58,7 +58,6 @@
 			<ref bean="lobHandler" />
 		</property>
 	</bean>
-	
 	<bean id="lobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" lazy-init="true"/>
 
 	<bean id="cacheProvider" class="com.jeecms.common.hibernate3.SpringEhCacheProvider">

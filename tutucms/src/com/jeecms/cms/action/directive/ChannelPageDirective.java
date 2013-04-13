@@ -29,7 +29,7 @@ import freemarker.template.TemplateModel;
 /**
  * 栏目分页标签
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class ChannelPageDirective extends AbstractChannelDirective {

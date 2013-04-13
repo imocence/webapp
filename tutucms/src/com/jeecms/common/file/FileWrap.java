@@ -21,7 +21,7 @@ import com.jeecms.common.image.ImageUtils;
  * 
  * 用于前台显示文件信息
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class FileWrap {
@@ -35,6 +35,8 @@ public class FileWrap {
 	private FileFilter filter;
 	private List<FileWrap> child;
 	private String filename;
+	
+	private Boolean valid;
 
 	/**
 	 * 构造器
@@ -72,6 +74,20 @@ public class FileWrap {
 		this.file = file;
 		this.rootPath = rootPath;
 		this.filter = filter;
+	}
+	/**
+	 * 构造器
+	 * 
+	 * @param file
+	 *            待包装的文件
+	 * @param rootPath
+	 *            根路径，用于计算相对路径
+	 */
+	public FileWrap(File file, String rootPath, FileFilter filter,Boolean valid) {
+		this.file = file;
+		this.rootPath = rootPath;
+		this.filter = filter;
+		this.valid=valid;
 	}
 
 	/**
@@ -158,6 +174,7 @@ public class FileWrap {
 	public long getSize() {
 		return file.length() / 1024 + 1;
 	}
+	
 
 	/**
 	 * 获得文件的图标名称
@@ -190,7 +207,9 @@ public class FileWrap {
 			return "swf";
 		} else if (ext.equals("txt")) {
 			return "txt";
-		} else {
+		} else if (ext.equals("sql")) {
+			return "sql";
+		}else {
 			return "unknow";
 		}
 	}
@@ -307,11 +326,21 @@ public class FileWrap {
 	public void setChild(List<FileWrap> child) {
 		this.child = child;
 	}
+	
+
+	public Boolean getValid() {
+		return valid;
+	}
+
+	public void setValid(Boolean valid) {
+		this.valid = valid;
+	}
+
 
 	/**
 	 * 文件比较器，文件夹靠前排。
 	 * 
-	 * @author coco
+	 * @author liufang
 	 * 
 	 */
 	public static class FileComparator implements Comparator<File> {

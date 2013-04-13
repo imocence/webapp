@@ -223,7 +223,7 @@ public class CmsModelItemAct {
 	}
 
 	@Autowired
-	private CmsModelItemMng manager;
-	@Autowired
 	private CmsModelMng cmsModelMng;
+	@Autowired
+	private CmsModelItemMng manager;
 }

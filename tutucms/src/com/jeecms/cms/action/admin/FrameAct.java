@@ -100,4 +100,19 @@ public class FrameAct {
 	public String contentMain(ModelMap model) {
 		return "frame/content_main";
 	}
+	
+	@RequestMapping("/frame/statistic_main.do")
+	public String statisticMain(ModelMap model) {
+		return "frame/statistic_main";
+	}
+	
+	@RequestMapping("/frame/statistic_left.do")
+	public String statisticLeft(){
+		return "frame/statistic_left";
+	}
+	
+	@RequestMapping("/frame/statistic_right.do")
+	public String statisticRight(){
+		return "frame/statistic_right";
+	}
 }

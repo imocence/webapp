@@ -30,7 +30,7 @@ import freemarker.template.TemplateModel;
 /**
  * 栏目列表标签
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class ChannelListDirective extends AbstractChannelDirective {

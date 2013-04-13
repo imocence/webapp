@@ -23,6 +23,14 @@ public class CmsAcquisition extends BaseCmsAcquisition {
 	 */
 	public static final int PAUSE = 2;
 
+	public static enum AcquisitionResultType {
+		SUCCESS, TITLESTARTNOTFOUND, TITLEENDNOTFOUND, CONTENTSTARTNOTFOUND, CONTENTENDNOTFOUND, TITLEEXIST, URLEXIST, UNKNOW
+	}
+	
+	public static enum AcquisitionRepeatCheckType{
+		NONE, TITLE, URL
+	}
+
 	/**
 	 * 是否停止
 	 * 
@@ -116,6 +124,9 @@ public class CmsAcquisition extends BaseCmsAcquisition {
 		if (getPauseTime() == null) {
 			setPauseTime(0);
 		}
+		if(getQueue()==null){
+			setQueue(0);
+		}
 	}
 
 	/* [CONSTRUCTOR MARKER BEGIN] */
@@ -145,7 +156,8 @@ public class CmsAcquisition extends BaseCmsAcquisition {
 		java.lang.Integer currItem,
 		java.lang.Integer totalItem,
 		java.lang.Integer pauseTime,
-		java.lang.String pageEncoding) {
+		java.lang.String pageEncoding,
+		java.lang.Integer queue) {
 
 		super (
 			id,
@@ -159,7 +171,8 @@ public class CmsAcquisition extends BaseCmsAcquisition {
 			currItem,
 			totalItem,
 			pauseTime,
-			pageEncoding);
+			pageEncoding,
+			queue);
 	}
 
 	/* [CONSTRUCTOR MARKER END] */

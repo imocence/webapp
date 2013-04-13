@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.entity.main.CmsUser;
 import com.jeecms.cms.manager.main.CmsConfigMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsSiteMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.common.web.ResponseUtils;
@@ -66,6 +67,8 @@ public class CmsSiteAct {
 		}
 		bean = manager.save(site, user, bean, uploadFtpId);
 		log.info("save CmsSite id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsSite.log.save", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return "redirect:v_list.do";
 	}
 
@@ -78,6 +81,8 @@ public class CmsSiteAct {
 		}
 		bean = manager.update(bean, uploadFtpId);
 		log.info("update CmsSite id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsSite.log.update", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return list(pageNo, request, model);
 	}
 
@@ -91,6 +96,8 @@ public class CmsSiteAct {
 		CmsSite[] beans = manager.deleteByIds(ids);
 		for (CmsSite bean : beans) {
 			log.info("delete CmsSite id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsSite.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getName());
 		}
 		return list(pageNo, request, model);
 	}
@@ -170,6 +177,8 @@ public class CmsSiteAct {
 	private CmsConfigMng configMng;
 	@Autowired
 	private FtpMng ftpMng;
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsSiteMng manager;
 }

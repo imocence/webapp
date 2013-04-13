@@ -17,7 +17,7 @@ import com.jeecms.cms.entity.main.CmsSite;
 /**
  * 后台（管理员）本地化信息拦截器
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class AdminLocaleInterceptor extends HandlerInterceptorAdapter {

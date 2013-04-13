@@ -809,7 +809,7 @@ function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 	// Remove animation
 	window.parent.Throbber.Hide() ;
 	GetE( 'divUpload' ).style.display  = '' ;
-
+	
 	switch ( errorNumber )
 	{
 		case 0 :	// No errors
@@ -825,6 +825,7 @@ function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 			alert( 'A file with the same name is already available. The uploaded file has been renamed to "' + fileName + '"' ) ;
 			break ;
 		case 202 :
+			alert("link");
 			alert( 'Invalid file type' ) ;
 			return ;
 		case 203 :
@@ -847,6 +848,7 @@ var oUploadDeniedExtRegex	= new RegExp( FCKConfig.LinkUploadDeniedExtensions, 'i
 
 function CheckUpload()
 {
+	alert("CheckUpload()");
 	var sFile = GetE('txtUploadFile').value ;
 
 	if ( sFile.length == 0 )

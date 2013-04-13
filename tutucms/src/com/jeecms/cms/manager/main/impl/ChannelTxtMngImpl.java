@@ -13,7 +13,7 @@ import com.jeecms.common.hibernate3.Updater;
 /**
  * 栏目文本Manager实现
  * 
- * @author coco
+ * @author liufang
  * 
  */
 @Service

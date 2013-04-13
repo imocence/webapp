@@ -14,8 +14,12 @@ public interface CmsGroupMng {
 	public void updateRegDef(Integer regDefId);
 
 	public CmsGroup save(CmsGroup bean);
+	
+	public CmsGroup save(CmsGroup bean,Integer[] viewGroupIds, Integer[] contriGroupIds);
 
 	public CmsGroup update(CmsGroup bean);
+	
+	public CmsGroup update(CmsGroup bean,Integer[] viewGroupIds, Integer[] contriGroupIds);
 
 	public CmsGroup deleteById(Integer id);
 

@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.jeecms.cms.entity.main.Channel;
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.entity.main.CmsTopic;
+import com.jeecms.cms.manager.assist.CmsFileMng;
 import com.jeecms.cms.manager.main.ChannelMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsTopicMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
@@ -102,13 +104,18 @@ public class CmsTopicAct {
 			bean.setTplContent(site.getTplPath() + bean.getTplContent());
 		}
 		bean = manager.save(bean, channelId);
+		fileMng.updateFileByPath(bean.getContentImg(), true, null);
+		fileMng.updateFileByPath(bean.getTitleImg(), true, null);
 		log.info("save CmsTopic id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsTopic.log.save", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return "redirect:v_list.do";
 	}
 
 	@RequestMapping("/topic/o_update.do")
-	public String update(CmsTopic bean, Integer channelId, Integer pageNo,
-			HttpServletRequest request, ModelMap model) {
+	public String update(CmsTopic bean, Integer channelId, 
+			String oldTitleImg,String oldContentImg,
+			Integer pageNo,HttpServletRequest request, ModelMap model) {
 		WebErrors errors = validateUpdate(bean.getId(), request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
@@ -118,7 +125,15 @@ public class CmsTopicAct {
 			bean.setTplContent(site.getTplPath() + bean.getTplContent());
 		}
 		bean = manager.update(bean, channelId);
+		//旧标题图
+		fileMng.updateFileByPath(oldTitleImg, false, null);
+		//旧内容图
+		fileMng.updateFileByPath(oldContentImg, false, null);
+		fileMng.updateFileByPath(bean.getContentImg(), true, null);
+		fileMng.updateFileByPath(bean.getTitleImg(), true, null);
 		log.info("update CmsTopic id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsTopic.log.update", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return list(pageNo, request, model);
 	}
 
@@ -131,7 +146,11 @@ public class CmsTopicAct {
 		}
 		CmsTopic[] beans = manager.deleteByIds(ids);
 		for (CmsTopic bean : beans) {
+			fileMng.updateFileByPath(bean.getContentImg(), false, null);
+			fileMng.updateFileByPath(bean.getTitleImg(), false, null);
 			log.info("delete CmsTopic id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsTopic.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getName());
 		}
 		return list(pageNo, request, model);
 	}
@@ -247,5 +266,9 @@ public class CmsTopicAct {
 	@Autowired
 	private ChannelMng channelMng;
 	@Autowired
+	private CmsLogMng cmsLogMng;
+	@Autowired
 	private CmsTopicMng manager;
+	@Autowired
+	private CmsFileMng fileMng;
 }

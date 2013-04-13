@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.web.WebErrors;
 import com.jeecms.core.entity.Ftp;
 import com.jeecms.core.manager.FtpMng;
@@ -50,6 +51,8 @@ public class FtpAct {
 		}
 		bean = manager.save(bean);
 		log.info("save Ftp id={}", bean.getId());
+		cmsLogMng.operating(request, "ftp.log.save", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return "redirect:v_list.do";
 	}
 
@@ -62,6 +65,8 @@ public class FtpAct {
 		}
 		bean = manager.update(bean);
 		log.info("update Ftp id={}.", bean.getId());
+		cmsLogMng.operating(request, "ftp.log.update", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return list(pageNo, request, model);
 	}
 
@@ -75,6 +80,8 @@ public class FtpAct {
 		Ftp[] beans = manager.deleteByIds(ids);
 		for (Ftp bean : beans) {
 			log.info("delete Ftp id={}", bean.getId());
+			cmsLogMng.operating(request, "ftp.log.delete", "id=" + bean.getId()
+					+ ";name=" + bean.getName());
 		}
 		return list(pageNo, request, model);
 	}
@@ -120,6 +127,8 @@ public class FtpAct {
 		return false;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private FtpMng manager;
 }

@@ -15,24 +15,25 @@ import java.io.Serializable;
 public abstract class BaseContentExt  implements Serializable {
 
 	public static String REF = "ContentExt";
-	public static String PROP_LINK = "link";
-	public static String PROP_MEDIA_PATH = "mediaPath";
-	public static String PROP_AUTHOR = "author";
-	public static String PROP_TITLE_COLOR = "titleColor";
-	public static String PROP_ORIGIN_URL = "originUrl";
-	public static String PROP_MEDIA_TYPE = "mediaType";
-	public static String PROP_TPL_CONTENT = "tplContent";
 	public static String PROP_SHORT_TITLE = "shortTitle";
-	public static String PROP_TYPE_IMG = "typeImg";
+	public static String PROP_TITLE_COLOR = "titleColor";
 	public static String PROP_DESCRIPTION = "description";
-	public static String PROP_ORIGIN = "origin";
+	public static String PROP_MEDIA_TYPE = "mediaType";
 	public static String PROP_TITLE_IMG = "titleImg";
-	public static String PROP_RELEASE_DATE = "releaseDate";
-	public static String PROP_BOLD = "bold";
+	public static String PROP_AUTHOR = "author";
+	public static String PROP_ORIGIN = "origin";
 	public static String PROP_TITLE = "title";
-	public static String PROP_CONTENT = "content";
-	public static String PROP_ID = "id";
 	public static String PROP_CONTENT_IMG = "contentImg";
+	public static String PROP_TYPE_IMG = "typeImg";
+	public static String PROP_ORIGIN_URL = "originUrl";
+	public static String PROP_LINK = "link";
+	public static String PROP_NEED_REGENERATE = "needRegenerate";
+	public static String PROP_MEDIA_PATH = "mediaPath";
+	public static String PROP_BOLD = "bold";
+	public static String PROP_ID = "id";
+	public static String PROP_CONTENT = "content";
+	public static String PROP_RELEASE_DATE = "releaseDate";
+	public static String PROP_TPL_CONTENT = "tplContent";
 
 
 	// constructors
@@ -55,12 +56,14 @@ public abstract class BaseContentExt  implements Serializable {
 		java.lang.Integer id,
 		java.lang.String title,
 		java.util.Date releaseDate,
-		java.lang.Boolean bold) {
+		java.lang.Boolean bold,
+		java.lang.Boolean needRegenerate) {
 
 		this.setId(id);
 		this.setTitle(title);
 		this.setReleaseDate(releaseDate);
 		this.setBold(bold);
+		this.setNeedRegenerate(needRegenerate);
 		initialize();
 	}
 
@@ -90,6 +93,7 @@ public abstract class BaseContentExt  implements Serializable {
 	private java.lang.String typeImg;
 	private java.lang.String link;
 	private java.lang.String tplContent;
+	private java.lang.Boolean needRegenerate;
 
 	// one to one
 	private com.jeecms.cms.entity.main.Content content;
@@ -371,6 +375,22 @@ public abstract class BaseContentExt  implements Serializable {
 	 */
 	public void setTplContent (java.lang.String tplContent) {
 		this.tplContent = tplContent;
+	}
+
+
+	/**
+	 * Return the value associated with the column: need_regenerate
+	 */
+	public java.lang.Boolean getNeedRegenerate () {
+		return needRegenerate;
+	}
+
+	/**
+	 * Set the value related to the column: need_regenerate
+	 * @param needRegenerate the need_regenerate value
+	 */
+	public void setNeedRegenerate (java.lang.Boolean needRegenerate) {
+		this.needRegenerate = needRegenerate;
 	}
 
 

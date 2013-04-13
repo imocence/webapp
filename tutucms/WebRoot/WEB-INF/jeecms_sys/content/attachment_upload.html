@@ -12,6 +12,7 @@ function uploadAttachment(n) {
 	$('#attachmentContent').append(af);
 	//复制一个file放至原处
 	$('#afc'+n).append(af.clone().attr('value',''));
+	$('#attachmentText'+n).attr('value','');
 	//修改属性
 	af.attr('id','');
 	//其他表单

@@ -16,7 +16,7 @@ import com.jeecms.cms.manager.main.ContentCountMng;
 /**
  * 内容计数器缓存实现
  * 
- * @author coco
+ * @author liufang
  * 
  */
 @Service
@@ -49,6 +49,8 @@ public class ContentCountCacheImpl implements ContentCountCache, DisposableBean 
 		if (time > refreshTime + interval) {
 			refreshTime = time;
 			int count = contentCountMng.freshCacheToDB(cache);
+			// 清除缓存
+			cache.removeAll();
 			log.info("refresh cache views to DB: {}", count);
 		}
 	}

@@ -1,6 +1,9 @@
 package com.jeecms.core.manager;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 import com.jeecms.common.email.EmailSender;
 import com.jeecms.common.email.MessageTemplate;
@@ -32,6 +35,8 @@ public interface UnifiedUserMng {
 	 */
 	public UnifiedUser resetPassword(Integer userId);
 
+	public Integer errorRemaining(String username);
+
 	public UnifiedUser login(String username, String password, String ip)
 			throws UsernameNotFoundException, BadCredentialsException;
 
@@ -49,6 +54,9 @@ public interface UnifiedUserMng {
 
 	public UnifiedUser save(String username, String email, String password,
 			String ip);
+	
+	public UnifiedUser save(String username, String email, String password,
+			String ip, Boolean activation, EmailSender sender, MessageTemplate msgTpl)throws UnsupportedEncodingException, MessagingException;
 
 	/**
 	 * 修改邮箱和密码
@@ -77,4 +85,8 @@ public interface UnifiedUserMng {
 	public UnifiedUser deleteById(Integer id);
 
 	public UnifiedUser[] deleteByIds(Integer[] ids);
+	
+	public UnifiedUser active(String username, String activationCode);
+
+	public UnifiedUser activeLogin(UnifiedUser user, String ip);
 }

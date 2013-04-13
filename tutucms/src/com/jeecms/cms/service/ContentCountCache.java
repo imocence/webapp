@@ -3,7 +3,7 @@ package com.jeecms.cms.service;
 /**
  * 内容计数器缓存接口
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface ContentCountCache {

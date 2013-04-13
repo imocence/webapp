@@ -28,7 +28,7 @@ import com.jeecms.common.web.RequestUtils;
 /**
  * 本站管理员ACTION
  * 
- * @author coco
+ * @author liufang
  * 
  */
 @Controller
@@ -119,25 +119,27 @@ public class CmsAdminLocalAct extends CmsAdminAbstract {
 				selfAdmin, rank, groupId, roleIds, channelIds, siteIds, steps,
 				allChannels, ext);
 		log.info("save CmsAdmin id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsUser.log.save", "id=" + bean.getId()
+				+ ";username=" + bean.getUsername());
 		return "redirect:v_list.do";
 	}
 
 	@RequestMapping("/admin_local/o_update.do")
 	public String update(CmsUser bean, CmsUserExt ext, String password,
 			Integer groupId, Integer[] roleIds, Integer[] channelIds,
-			Byte[] steps, Boolean[] allChannels, String queryUsername,
+			Byte step, Boolean allChannel, String queryUsername,
 			String queryEmail, Integer queryGroupId, Boolean queryDisabled,
 			Integer pageNo, HttpServletRequest request, ModelMap model) {
 		CmsSite site = CmsUtils.getSite(request);
-		WebErrors errors = validateUpdate(bean.getId(), request);
+		WebErrors errors = validateUpdate(bean.getId(),bean.getRank(), request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
-		Integer[] siteIds = new Integer[] { site.getId() };
 		bean = manager.updateAdmin(bean, ext, password, groupId, roleIds,
-				channelIds, siteIds, steps, allChannels);
+				channelIds, site.getId(), step, allChannel);
 		log.info("update CmsAdmin id={}.", bean.getId());
-
+		cmsLogMng.operating(request, "cmsUser.log.update", "id=" + bean.getId()
+				+ ";username=" + bean.getUsername());
 		return list(queryUsername, queryEmail, queryGroupId, queryDisabled,
 				pageNo, request, model);
 	}
@@ -156,6 +158,8 @@ public class CmsAdminLocalAct extends CmsAdminAbstract {
 		CmsUser[] beans = manager.deleteByIds(ids);
 		for (CmsUser bean : beans) {
 			log.info("delete CmsAdmin id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsUser.log.delete", "id="
+					+ bean.getId() + ";username=" + bean.getUsername());
 		}
 		return list(queryUsername, queryEmail, queryGroupId, queryDisabled,
 				pageNo, request, model);
@@ -197,9 +201,12 @@ public class CmsAdminLocalAct extends CmsAdminAbstract {
 		return errors;
 	}
 
-	private WebErrors validateUpdate(Integer id, HttpServletRequest request) {
+	private WebErrors validateUpdate(Integer id,Integer rank, HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		if (vldExist(id, errors)) {
+			return errors;
+		}
+		if (vldParams(id,rank, request, errors)) {
 			return errors;
 		}
 		return errors;
@@ -220,6 +227,23 @@ public class CmsAdminLocalAct extends CmsAdminAbstract {
 		}
 		CmsUser entity = manager.findById(id);
 		if (errors.ifNotExist(entity, CmsUser.class, id)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean vldParams(Integer id,Integer rank, HttpServletRequest request,
+			WebErrors errors) {
+		CmsUser user = CmsUtils.getUser(request);
+		CmsUser entity = manager.findById(id);
+		//提升等级大于当前登录用户
+		if (rank > user.getRank()) {
+			errors.addErrorCode("error.noPermissionToRaiseRank", id);
+			return true;
+		}
+		//修改的用户等级大于当前登录用户 无权限
+		if (entity.getRank() > user.getRank()) {
+			errors.addErrorCode("error.noPermission", CmsUser.class, id);
 			return true;
 		}
 		return false;

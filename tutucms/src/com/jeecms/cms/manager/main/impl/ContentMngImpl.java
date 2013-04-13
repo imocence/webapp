@@ -2,7 +2,10 @@ package com.jeecms.cms.manager.main.impl;
 
 import static com.jeecms.cms.entity.main.ContentCheck.DRAFT;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.jeecms.cms.dao.main.ContentDao;
+import com.jeecms.cms.entity.assist.CmsFile;
 import com.jeecms.cms.entity.main.Channel;
 import com.jeecms.cms.entity.main.CmsGroup;
 import com.jeecms.cms.entity.main.CmsSite;
@@ -29,6 +33,7 @@ import com.jeecms.cms.entity.main.ContentTxt;
 import com.jeecms.cms.entity.main.Channel.AfterCheckEnum;
 import com.jeecms.cms.entity.main.Content.ContentStatus;
 import com.jeecms.cms.manager.assist.CmsCommentMng;
+import com.jeecms.cms.manager.assist.CmsFileMng;
 import com.jeecms.cms.manager.main.ChannelMng;
 import com.jeecms.cms.manager.main.CmsGroupMng;
 import com.jeecms.cms.manager.main.CmsTopicMng;
@@ -42,8 +47,16 @@ import com.jeecms.cms.manager.main.ContentTxtMng;
 import com.jeecms.cms.manager.main.ContentTypeMng;
 import com.jeecms.cms.service.ChannelDeleteChecker;
 import com.jeecms.cms.service.ContentListener;
+import com.jeecms.cms.staticpage.StaticPageSvc;
+import com.jeecms.cms.staticpage.exception.ContentNotCheckedException;
+import com.jeecms.cms.staticpage.exception.GeneratedZeroStaticPageException;
+import com.jeecms.cms.staticpage.exception.StaticPageNotOpenException;
+import com.jeecms.cms.staticpage.exception.TemplateNotFoundException;
+import com.jeecms.cms.staticpage.exception.TemplateParseException;
 import com.jeecms.common.hibernate3.Updater;
 import com.jeecms.common.page.Pagination;
+
+import freemarker.template.TemplateException;
 
 @Service
 @Transactional
@@ -410,6 +423,10 @@ public class ContentMngImpl implements ContentMng, ChannelDeleteChecker {
 		byte userStep = user.getCheckStep(content.getSite().getId());
 		byte contentStep = check.getCheckStep();
 		byte finalStep = content.getChannel().getFinalStepExtends();
+		// 用户审核级别小于当前审核级别，则不能审核
+		if (userStep < contentStep) {
+			return content;
+		}
 		check.setRejected(false);
 		// 上级审核，清除退回意见。自我审核不清除退回意见。
 		if (userStep > contentStep) {
@@ -421,6 +438,9 @@ public class ContentMngImpl implements ContentMng, ChannelDeleteChecker {
 			content.setStatus(ContentCheck.CHECKED);
 			// 终审，清除退回意见
 			check.setCheckOpinion(null);
+			//终审，设置审核者
+			check.setReviewer(user);
+			check.setCheckDate(Calendar.getInstance().getTime());
 		}
 		// 执行监听器
 		afterChange(content, mapList);
@@ -437,6 +457,13 @@ public class ContentMngImpl implements ContentMng, ChannelDeleteChecker {
 
 	public Content reject(Integer id, CmsUser user, Byte step, String opinion) {
 		Content content = findById(id);
+		Integer siteId = content.getSite().getId();
+		byte userStep = user.getCheckStep(siteId);
+		byte contentStep = content.getCheckStep();
+		// 用户审核级别小于当前审核级别，则不能退回
+		if (userStep < contentStep) {
+			return content;
+		}
 		// 执行监听器
 		List<Map<String, Object>> mapList = preChange(content);
 		ContentCheck check = content.getContentCheck();
@@ -447,9 +474,6 @@ public class ContentMngImpl implements ContentMng, ChannelDeleteChecker {
 		// 退回稿件一律为未终审
 		content.setStatus(ContentCheck.CHECKING);
 
-		Integer siteId = content.getSite().getId();
-		byte userStep = user.getCheckStep(siteId);
-		byte contentStep = content.getCheckStep();
 		if (step != null) {
 			// 指定退回级别，不能大于自身级别
 			if (step < userStep) {
@@ -530,6 +554,7 @@ public class ContentMngImpl implements ContentMng, ChannelDeleteChecker {
 		contentTagMng.removeTags(bean.getTags());
 		// 删除评论
 		cmsCommentMng.deleteByContentId(id);
+		bean.clear();
 		bean = dao.deleteById(id);
 		// 执行监听器
 		afterDelete(bean);
@@ -544,6 +569,59 @@ public class ContentMngImpl implements ContentMng, ChannelDeleteChecker {
 		return beans;
 	}
 
+	public Content[] contentStatic(Integer[] ids)
+			throws TemplateNotFoundException, TemplateParseException,
+			GeneratedZeroStaticPageException, StaticPageNotOpenException, ContentNotCheckedException {
+		int count = 0;
+		List<Content> list = new ArrayList<Content>();
+		for (int i = 0, len = ids.length; i < len; i++) {
+			Content content = findById(ids[i]);
+			try {
+				if (!content.getChannel().getStaticContent()) {
+					throw new StaticPageNotOpenException(
+							"content.staticNotOpen", count, content.getTitle());
+				}
+				if(!content.isChecked()){
+					throw new ContentNotCheckedException("content.notChecked", count, content.getTitle());
+				}
+				if (staticPageSvc.content(content)) {
+					list.add(content);
+					count++;
+				}
+			} catch (IOException e) {
+				throw new TemplateNotFoundException(
+						"content.tplContentNotFound", count, content.getTitle());
+			} catch (TemplateException e) {
+				throw new TemplateParseException("content.tplContentException",
+						count, content.getTitle());
+			}
+		}
+		if (count == 0) {
+			throw new GeneratedZeroStaticPageException(
+					"content.staticGenerated");
+		}
+		Content[] beans = new Content[count];
+		return list.toArray(beans);
+	}
+	
+	public Pagination getPageForCollection(Integer siteId, Integer memberId, int pageNo, int pageSize){
+		return dao.getPageForCollection(siteId,memberId,pageNo,pageSize);
+	}
+	
+	public void updateFileByContent(Content bean,Boolean valid){
+		Set<CmsFile>files;
+		Iterator<CmsFile>it;
+		CmsFile tempFile;
+		//处理附件
+		files=bean.getFiles();
+		it=files.iterator();
+		while(it.hasNext()){
+			tempFile=it.next();
+			tempFile.setFileIsvalid(valid);
+			fileMng.update(tempFile);
+		}
+	}
+
 	public String checkForChannelDelete(Integer channelId) {
 		int count = dao.countByChannelId(channelId);
 		if (count > 0) {
@@ -551,7 +629,7 @@ public class ContentMngImpl implements ContentMng, ChannelDeleteChecker {
 		} else {
 			return null;
 		}
-	}	
+	}
 
 	private void preSave(Content content) {
 		if (listenerList != null) {
@@ -630,6 +708,8 @@ public class ContentMngImpl implements ContentMng, ChannelDeleteChecker {
 	private CmsTopicMng cmsTopicMng;
 	private CmsCommentMng cmsCommentMng;
 	private ContentDao dao;
+	private StaticPageSvc staticPageSvc;
+	private CmsFileMng fileMng;
 
 	@Autowired
 	public void setChannelMng(ChannelMng channelMng) {
@@ -685,9 +765,19 @@ public class ContentMngImpl implements ContentMng, ChannelDeleteChecker {
 	public void setCmsCommentMng(CmsCommentMng cmsCommentMng) {
 		this.cmsCommentMng = cmsCommentMng;
 	}
+	
+	@Autowired
+	public void setFileMng(CmsFileMng fileMng) {
+		this.fileMng = fileMng;
+	}
 
 	@Autowired
 	public void setDao(ContentDao dao) {
 		this.dao = dao;
+	}
+
+	@Autowired
+	public void setStaticPageSvc(StaticPageSvc staticPageSvc) {
+		this.staticPageSvc = staticPageSvc;
 	}
 }

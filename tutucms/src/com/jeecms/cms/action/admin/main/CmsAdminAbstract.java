@@ -13,6 +13,7 @@ import com.jeecms.cms.entity.main.Channel;
 import com.jeecms.cms.entity.main.CmsUser;
 import com.jeecms.cms.manager.main.ChannelMng;
 import com.jeecms.cms.manager.main.CmsGroupMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsRoleMng;
 import com.jeecms.cms.manager.main.CmsSiteMng;
 import com.jeecms.cms.manager.main.CmsUserMng;
@@ -69,6 +70,8 @@ public class CmsAdminAbstract {
 	protected CmsRoleMng cmsRoleMng;
 	@Autowired
 	protected CmsGroupMng cmsGroupMng;
+	@Autowired
+	protected CmsLogMng cmsLogMng;
 	@Autowired
 	protected CmsUserMng manager;
 }

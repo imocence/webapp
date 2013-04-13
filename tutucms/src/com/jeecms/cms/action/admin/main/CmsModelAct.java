@@ -12,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.jeecms.cms.entity.main.CmsModel;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsModelMng;
 import com.jeecms.cms.web.WebErrors;
 
@@ -50,6 +51,8 @@ public class CmsModelAct {
 		}
 		bean = manager.save(bean);
 		log.info("save CmsModel id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsModel.log.save", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return "redirect:v_list.do";
 	}
 
@@ -62,6 +65,8 @@ public class CmsModelAct {
 		}
 		bean = manager.update(bean);
 		log.info("update CmsModel id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsModel.log.update", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return list(request, model);
 	}
 
@@ -75,6 +80,8 @@ public class CmsModelAct {
 		CmsModel[] beans = manager.deleteByIds(ids);
 		for (CmsModel bean : beans) {
 			log.info("delete CmsModel id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsModel.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getName());
 		}
 		return list(request, model);
 	}
@@ -165,6 +172,8 @@ public class CmsModelAct {
 		return false;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsModelMng manager;
 }

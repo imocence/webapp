@@ -10,7 +10,7 @@ import com.jeecms.cms.entity.main.CmsUser;
  * 
  * 比如获得会员信息,获得后台站点信息
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class CmsUtils {

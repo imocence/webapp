@@ -3,7 +3,7 @@ package com.jeecms.cms;
 /**
  * CMS常量
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class Constants {
@@ -56,6 +56,18 @@ public class Constants {
 	 */
 	public static final String TPLDIR_TAG = "tag";
 	/**
+	 * 评论模板
+	 */
+	public static final String TPLDIR_COMMENT = "comment";
+	/**
+	 * 留言模板
+	 */
+	public static final String TPLDIR_GUESTBOOK = "guestbook";
+	/**
+	 * 站内信模板
+	 */
+	public static final String TPLDIR_MESSAGE = "message";
+	/**
 	 * 列表样式模板
 	 */
 	public static final String TPLDIR_STYLE_LIST = "style_list";
@@ -101,4 +113,16 @@ public class Constants {
 	 * 页面禁止访问
 	 */
 	public static final String ERROR_403 = "error/403";
+	/**
+	 * 数据库备份路径
+	 */
+	public static final String BACKUP_PATH = "/WEB-INF/buckup";
+	/**
+	 * 数据库备份文本前缀
+	 */
+	public static String ONESQL_PREFIX="JEECMS_BACKUP_";
+	/**
+	 * 防火墙配置文件
+	 */
+	public static String FIREWALL_CONFIGPATH = "/WEB-INF/config/firewall.properties";
 }

@@ -13,6 +13,7 @@
 $(function() {
   Cms.attachment("${base}","${content.id}","${content.attachments?size}","attach");
   Cms.viewCount("${base}","${content.id}");
+  Cms.siteFlow("${base}",location.href);
 });
 </script>
 </head>
@@ -23,16 +24,13 @@ $(function() {
 <!--header_begin-->
 [#include "../include/页头导航栏.html"/]
 <!--header_end-->
-<!--search_begin-->
-[#include "../include/页头搜索栏.html"/]
-<!--search_end-->
 <!--body_begin-->
 <div id="main">
-  <div class="page"><img src="/${res}/img/banner1.jpg" /></div>
+
   <div class="page2 position"> 您现在正在浏览： <a href="${base}/">首页</a> &raquo; 文章评论详细列表：</div>
   <!--cjbd_begin-->
   <div class="page2 box">
-    <div class="w700 fl">
+    <div class="w720 fl">
       <div class="rb_top"></div>
       <div class="rb_mid box">
         <div class="w96">

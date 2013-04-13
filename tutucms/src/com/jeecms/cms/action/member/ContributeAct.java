@@ -40,7 +40,7 @@ import com.octo.captcha.service.image.ImageCaptchaService;
 /**
  * 会员投稿Action
  * 
- * @author coco
+ * @author liufang
  * 
  */
 @Controller

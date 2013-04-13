@@ -6,8 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +18,9 @@ import com.jeecms.common.web.RequestUtils;
 
 @Controller
 public class SearchAct {
-	private static final Logger log = LoggerFactory.getLogger(SearchAct.class);
-
 	public static final String SEARCH_INPUT = "tpl.searchInput";
 	public static final String SEARCH_RESULT = "tpl.searchResult";
+	public static final String SEARCH_ERROR = "tpl.searchError";
 
 	@RequestMapping(value = "/search*.jspx", method = RequestMethod.GET)
 	public String index(HttpServletRequest request,
@@ -34,6 +31,16 @@ public class SearchAct {
 		FrontUtils.frontData(request, model, site);
 		FrontUtils.frontPageData(request, model);
 		String q = RequestUtils.getQueryParam(request, "q");
+		if(q.equals("?")||q.equals("*")){
+			return FrontUtils.getTplPath(request, site.getSolutionPath(),
+					TPLDIR_SPECIAL, SEARCH_ERROR);
+		}
+		if(q.startsWith("?")||q.startsWith("*")){
+			model.addAttribute("oldq",q);
+			q=q.substring(1);
+			//替换关键词
+			model.addAttribute("q",q);
+		}
 		String channelId = RequestUtils.getQueryParam(request, "channelId");
 		if (StringUtils.isBlank(q) && StringUtils.isBlank(channelId)) {
 			model.remove("q");

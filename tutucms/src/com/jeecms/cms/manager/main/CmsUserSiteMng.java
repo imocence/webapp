@@ -12,6 +12,9 @@ public interface CmsUserSiteMng {
 
 	public CmsUserSite update(CmsUserSite bean);
 
+	public void updateByUser(CmsUser user, Integer siteId, Byte step,
+			Boolean allChannel);
+
 	public void updateByUser(CmsUser user, Integer[] siteIds, Byte[] steps,
 			Boolean[] allChannels);
 

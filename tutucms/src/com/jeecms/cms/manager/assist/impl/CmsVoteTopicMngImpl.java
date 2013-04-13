@@ -55,6 +55,8 @@ public class CmsVoteTopicMngImpl implements CmsVoteTopicMng {
 
 	public CmsVoteTopic update(CmsVoteTopic bean, Collection<CmsVoteItem> items) {
 		Updater<CmsVoteTopic> updater = new Updater<CmsVoteTopic>(bean);
+		updater.include(CmsVoteTopic.PROP_START_TIME);
+		updater.include(CmsVoteTopic.PROP_END_TIME);
 		bean = dao.updateByUpdater(updater);
 		int totalCount = 0;
 		for (CmsVoteItem item : items) {

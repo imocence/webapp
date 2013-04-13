@@ -23,6 +23,7 @@
 		<property name="typeImg" column="type_img" type="string" not-null="false" length="100"/>
 		<property name="link" column="link" type="string" not-null="false" length="255"/>
 		<property name="tplContent" column="tpl_content" type="string" not-null="false" length="100"/>
+		<property name="needRegenerate" column="need_regenerate" type="java.lang.Boolean" not-null="true"/>
 		<one-to-one name="content" class="Content" constrained="true"/>
 	</class>
 </hibernate-mapping>

@@ -35,6 +35,9 @@ public class PersonalAct {
 			return errors.showErrorPage(model);
 		}
 		CmsUserExt ext = user.getUserExt();
+		if (ext == null) {
+			ext = new CmsUserExt();
+		}
 		ext.setRealname(realname);
 		cmsUserExtMng.update(ext, user);
 		cmsUserMng.updatePwdEmail(user.getId(), newPwd, email);

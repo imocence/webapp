@@ -8,7 +8,7 @@ import com.jeecms.common.hibernate3.Updater;
 /**
  * 站点DAO接口
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface CmsSiteDao {

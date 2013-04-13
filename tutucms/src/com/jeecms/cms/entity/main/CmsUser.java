@@ -93,10 +93,26 @@ public class CmsUser extends BaseCmsUser implements PriorityInterface {
 		}
 	}
 
-	public String getMoble() {
+	public String getMobile() {
 		CmsUserExt ext = getUserExt();
 		if (ext != null) {
-			return ext.getMoble();
+			return ext.getMobile();
+		} else {
+			return null;
+		}
+	}
+	public String getUserImg() {
+		CmsUserExt ext = getUserExt();
+		if (ext != null) {
+			return ext.getUserImg();
+		} else {
+			return null;
+		}
+	}
+	public String getUserSignature() {
+		CmsUserExt ext = getUserExt();
+		if (ext != null) {
+			return ext.getUserSignature();
 		} else {
 			return null;
 		}
@@ -180,6 +196,32 @@ public class CmsUser extends BaseCmsUser implements PriorityInterface {
 			setChannels(set);
 		}
 		set.add(channel);
+	}
+	
+	public void addToCollection(Content content) {
+		if (content == null) {
+			return;
+		}
+		Set<Content> set =getCollectContents();
+		if (set == null) {
+			set = new HashSet<Content>();
+			setCollectContents(set);
+		}
+		set.add(content);
+	}
+	public void delFromCollection(Content content) {
+		if (content == null) {
+			return;
+		}
+		Set<Content> set =getCollectContents();
+		if (set == null) {
+			return;
+		}else{
+			set.remove(content);
+		}
+	}
+	public void clearCollection() {
+		getCollectContents().clear();
 	}
 
 	public Set<CmsSite> getSites() {

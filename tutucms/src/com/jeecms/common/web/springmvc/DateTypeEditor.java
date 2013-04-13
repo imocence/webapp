@@ -12,18 +12,24 @@ import org.springframework.util.StringUtils;
  * 日期编辑器
  * 
  * 根据日期字符串长度判断是长日期还是短日期。只支持yyyy-MM-dd，yyyy-MM-dd HH:mm:ss两种格式。
- * 
- * @author coco
+ * 扩展支持yyyy,yyyy-MM日期格式
+ * @author liufang
  * 
  */
 public class DateTypeEditor extends PropertyEditorSupport {
 	public static final DateFormat DF_LONG = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
 	public static final DateFormat DF_SHORT = new SimpleDateFormat("yyyy-MM-dd");
+	public static final DateFormat DF_YEAR = new SimpleDateFormat("yyyy");
+	public static final DateFormat DF_MONTH = new SimpleDateFormat("yyyy-MM");
 	/**
 	 * 短类型日期长度
 	 */
 	public static final int SHORT_DATE = 10;
+	
+	public static final int YEAR_DATE = 4;
+	
+	public static final int MONTH_DATE = 7;
 
 	public void setAsText(String text) throws IllegalArgumentException {
 		text = text.trim();
@@ -32,7 +38,11 @@ public class DateTypeEditor extends PropertyEditorSupport {
 			return;
 		}
 		try {
-			if (text.length() <= SHORT_DATE) {
+			if (text.length() <= YEAR_DATE) {
+				setValue(new java.sql.Date(DF_YEAR.parse(text).getTime()));
+			}else  if (text.length() <= MONTH_DATE) {
+				setValue(new java.sql.Date(DF_MONTH.parse(text).getTime()));
+			}else if (text.length() <= SHORT_DATE) {
 				setValue(new java.sql.Date(DF_SHORT.parse(text).getTime()));
 			} else {
 				setValue(new java.sql.Timestamp(DF_LONG.parse(text).getTime()));

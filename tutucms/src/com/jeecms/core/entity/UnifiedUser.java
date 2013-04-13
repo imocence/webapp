@@ -1,13 +1,12 @@
 package com.jeecms.core.entity;
 
+
 import com.jeecms.core.entity.base.BaseUnifiedUser;
-
-
 
 public class UnifiedUser extends BaseUnifiedUser {
 	private static final long serialVersionUID = 1L;
 
-/*[CONSTRUCTOR MARKER BEGIN]*/
+	/* [CONSTRUCTOR MARKER BEGIN] */
 	public UnifiedUser () {
 		super();
 	}
@@ -28,7 +27,9 @@ public class UnifiedUser extends BaseUnifiedUser {
 		java.lang.String password,
 		java.util.Date registerTime,
 		java.lang.String registerIp,
-		java.lang.Integer loginCount) {
+		java.lang.Integer loginCount,
+		java.lang.Integer errorCount,
+		java.lang.Boolean activation) {
 
 		super (
 			id,
@@ -36,10 +37,20 @@ public class UnifiedUser extends BaseUnifiedUser {
 			password,
 			registerTime,
 			registerIp,
-			loginCount);
+			loginCount,
+			errorCount,
+			activation);
 	}
 
-/*[CONSTRUCTOR MARKER END]*/
-
+	/* [CONSTRUCTOR MARKER END] */
+	
+	public void init(){
+		if(getLoginCount()==null){
+			setLoginCount(0);
+		}
+		if(getErrorCount()==null){
+			setErrorCount(0);
+		}
+	}
 
 }

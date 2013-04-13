@@ -72,14 +72,14 @@ function disChannels(chk,i) {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>:  <@s.m "cmsAdminGlobal.function"/> - <@s.m "global.edit"/></div>
 	<form class="ropt">
-		<input type="button" value="<@s.m "global.backToList"/>" onclick="history.back();"/>
+		<input type="button" value="<@s.m "global.backToList"/>" onclick="history.back();" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_update.do" labelWidth="12">
 <@p.td width="50" colspan="1" label="cmsUser.username">${cmsAdmin.username}</@p.td>
 <@p.text width="50" colspan="1" label="cmsUser.email" name="email" value=cmsAdmin.email rvalue=cmsAdmin.email size="30" maxlength="100" class="email"/><@p.tr/>
@@ -102,7 +102,7 @@ function disChannels(chk,i) {
 <div style="float:left;padding-right:3px">
 	<label><input type="checkbox" name="siteIds" value="${site.id}"<#if siteIds?seq_contains(site.id)> checked="checked"</#if> onclick="disSite(this.checked,${site_index})"/>${site.shortName}</label>
 	<input id="step${site_index}" type="text" name="steps" value="${(us.checkStep)!1}"  min="1" max="127" class="required digits" style="width:40px"<#if !siteIds?seq_contains(site.id)> disabled="disabled"</#if>/>
-	<input id="channel${site_index}" type="button" value="<@s.m "cmsUser.channels"/>"<#if !siteIds?seq_contains(site.id)> disabled="disabled"</#if>/>	
+	<input class="channel-right" id="channel${site_index}" type="button" value="<@s.m "cmsUser.channels"/>"<#if !siteIds?seq_contains(site.id)> disabled="disabled"</#if>/>	
 	<input type="hidden" id="allChannel${site_index}" name="allChannels" value="${((us.allChannel)!true)?string}"<#if !siteIds?seq_contains(site.id)> disabled="disabled"</#if>/>
 	<span id="channelIdsContainer${site_index}"><#list cmsAdmin.getChannelIds(site.id) as cid><input type="hidden" name="channelIds" value="${cid}"/></#list></span>
 	<div id="channelDialog${site_index}" title="<@s.m "cmsUser.channels"/>(${site.name})" style="display:none;">

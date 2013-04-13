@@ -34,6 +34,7 @@
 	<bean id="cmsTopicAct" class="com.jeecms.cms.action.admin.main.CmsTopicAct"/>
 	<bean id="cmsGroupAct" class="com.jeecms.cms.action.admin.main.CmsGroupAct"/>
 	<bean id="cmsRoleAct" class="com.jeecms.cms.action.admin.main.CmsRoleAct"/>	
+	<bean id="cmsLogAct" class="com.jeecms.cms.action.admin.main.CmsLogAct"/>	
 	
 	<bean id="templateAct" class="com.jeecms.cms.action.admin.assist.TemplateAct">
 		<property name="tplManager" ref="tplManager"/>
@@ -46,5 +47,17 @@
 	<bean id="cmsGuestbookCtgAct" class="com.jeecms.cms.action.admin.assist.CmsGuestbookCtgAct"/>
 	<bean id="cmsGuestbookAct" class="com.jeecms.cms.action.admin.assist.CmsGuestbookAct"/>
 	<bean id="cmsVoteTopicAct" class="com.jeecms.cms.action.admin.assist.CmsVoteTopicAct"/>
+	<bean id="cmsFriendlinkCtgAct" class="com.jeecms.cms.action.admin.assist.CmsFriendlinkCtgAct"/>
+	<bean id="cmsFriendlinkAct" class="com.jeecms.cms.action.admin.assist.CmsFriendlinkAct"/>
+	<bean id="cmsAdvertisingSpaceAct" class="com.jeecms.cms.action.admin.assist.CmsAdvertisingSpaceAct"/>
+	<bean id="cmsAdvertisingAct" class="com.jeecms.cms.action.admin.assist.CmsAdvertisingAct"/>
+	
+	<bean id="cmsMessageAct" class="com.jeecms.cms.action.admin.assist.CmsMessageAct"/>
+	<bean id="dataAct" class="com.jeecms.cms.action.admin.assist.DataAct"/>
+	
+	<bean id="cmsStatististAct" class="com.jeecms.cms.statistic.CmsStatisticAct"/>
+	<bean id="cmsFileAct" class="com.jeecms.cms.action.admin.assist.CmsFileAct"/>
+	<bean id="cmsFireWallConfigAct" class="com.jeecms.cms.action.admin.assist.CmsFireWallConfigAct"/>
+	<bean id="workloadStatisticAct" class="com.jeecms.cms.statistic.workload.CmsWorkLoadStatisticAct"/>
 	
 </beans>

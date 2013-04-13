@@ -116,6 +116,9 @@ public abstract class BaseContent  implements Serializable {
 	private java.util.Set<com.jeecms.cms.entity.main.ContentTxt> contentTxtSet;
 	private java.util.Set<com.jeecms.cms.entity.main.ContentCheck> contentCheckSet;
 	private java.util.Map<java.lang.String, java.lang.String> attr;
+	private java.util.Set<com.jeecms.cms.entity.main.CmsUser> collectUsers;
+	private java.util.Set<com.jeecms.cms.entity.assist.CmsComment> comments;
+	private java.util.Set<com.jeecms.cms.entity.assist.CmsFile> files;
 
 
 
@@ -251,7 +254,16 @@ public abstract class BaseContent  implements Serializable {
 	public void setCommentsDay (java.lang.Short commentsDay) {
 		this.commentsDay = commentsDay;
 	}
+	
 
+
+	public java.util.Set<com.jeecms.cms.entity.assist.CmsFile> getFiles() {
+		return files;
+	}
+
+	public void setFiles(java.util.Set<com.jeecms.cms.entity.assist.CmsFile> files) {
+		this.files = files;
+	}
 
 	/**
 	 * Return the value associated with the column: downloads_day
@@ -514,6 +526,26 @@ public abstract class BaseContent  implements Serializable {
 	 */
 	public java.util.Map<java.lang.String, java.lang.String> getAttr () {
 		return attr;
+	}
+	
+
+	public java.util.Set<com.jeecms.cms.entity.main.CmsUser> getCollectUsers() {
+		return collectUsers;
+	}
+
+	public void setCollectUsers(
+			java.util.Set<com.jeecms.cms.entity.main.CmsUser> collectUsers) {
+		this.collectUsers = collectUsers;
+	}
+	
+
+	public java.util.Set<com.jeecms.cms.entity.assist.CmsComment> getComments() {
+		return comments;
+	}
+
+	public void setComments(
+			java.util.Set<com.jeecms.cms.entity.assist.CmsComment> comments) {
+		this.comments = comments;
 	}
 
 	/**

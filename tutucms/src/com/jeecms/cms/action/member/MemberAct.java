@@ -29,7 +29,7 @@ import com.jeecms.common.web.ResponseUtils;
 /**
  * 会员中心Action
  * 
- * @author coco
+ * @author liufang
  * 
  */
 @Controller
@@ -38,6 +38,7 @@ public class MemberAct {
 
 	public static final String MEMBER_CENTER = "tpl.memberCenter";
 	public static final String MEMBER_PROFILE = "tpl.memberProfile";
+	public static final String MEMBER_PORTRAIT = "tpl.memberPortrait";
 	public static final String MEMBER_PASSWORD = "tpl.memberPassword";
 
 	/**
@@ -92,6 +93,30 @@ public class MemberAct {
 		}
 		return FrontUtils.getTplPath(request, site.getSolutionPath(),
 				TPLDIR_MEMBER, MEMBER_PROFILE);
+	}
+	/**
+	 * 更换头像
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/member/portrait.jspx", method = RequestMethod.GET)
+	public String portrait(HttpServletRequest request,
+			HttpServletResponse response, ModelMap model) {
+		CmsSite site = CmsUtils.getSite(request);
+		CmsUser user = CmsUtils.getUser(request);
+		FrontUtils.frontData(request, model, site);
+		MemberConfig mcfg = site.getConfig().getMemberConfig();
+		// 没有开启会员功能
+		if (!mcfg.isMemberOn()) {
+			return FrontUtils.showMessage(request, model, "member.memberClose");
+		}
+		if (user == null) {
+			return FrontUtils.showLogin(request, model, site);
+		}
+		return FrontUtils.getTplPath(request, site.getSolutionPath(),
+				TPLDIR_MEMBER, MEMBER_PORTRAIT);
 	}
 
 	/**

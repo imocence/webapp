@@ -24,15 +24,15 @@ function ajaxSubmit() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>:  <@s.m "resource.function"/> - <@s.m "global.edit"/></div>
 	<form class="ropt">
 		<input type="hidden" name="root" value="${root}"/>
-		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do'"/>
+		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do'" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_update.do" labelWidth="15" onsubmit="ajaxSubmit();return false;">
 <@p.td label="resource.filename" help="resource.source.help"><input type="text" value="${filename}" readonly="readonly" class="disabled" size="40"/></@p.td><@p.tr/>
 <@p.td>

@@ -32,7 +32,7 @@ import freemarker.template.TemplateModel;
 /**
  * TAG分页标签
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class ContentTagPageDirective implements TemplateDirectiveModel {

@@ -14,7 +14,7 @@ public interface StaticPageSvc {
 	public int content(Integer siteId, Integer channelId, Date start)
 			throws IOException, TemplateException;
 
-	public void content(Content content) throws IOException, TemplateException;
+	public boolean content(Content content) throws IOException, TemplateException;
 
 	public void contentRelated(Content content) throws IOException,
 			TemplateException;

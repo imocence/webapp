@@ -3,7 +3,9 @@ package com.jeecms.cms.action.member;
 import static com.jeecms.cms.Constants.TPLDIR_MEMBER;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +27,14 @@ import com.jeecms.cms.manager.main.CmsUserMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.FrontUtils;
 import com.jeecms.cms.web.WebErrors;
+import com.jeecms.common.email.EmailSender;
+import com.jeecms.common.email.MessageTemplate;
 import com.jeecms.common.web.RequestUtils;
 import com.jeecms.common.web.ResponseUtils;
 import com.jeecms.common.web.session.SessionProvider;
+import com.jeecms.core.entity.UnifiedUser;
+import com.jeecms.core.manager.AuthenticationMng;
+import com.jeecms.core.manager.ConfigMng;
 import com.jeecms.core.manager.UnifiedUserMng;
 import com.octo.captcha.service.CaptchaServiceException;
 import com.octo.captcha.service.image.ImageCaptchaService;
@@ -34,7 +42,7 @@ import com.octo.captcha.service.image.ImageCaptchaService;
 /**
  * 前台会员注册Action
  * 
- * @author coco
+ * @author liufang
  * 
  */
 @Controller
@@ -43,6 +51,9 @@ public class RegisterAct {
 			.getLogger(RegisterAct.class);
 
 	public static final String REGISTER = "tpl.register";
+	public static final String REGISTER_RESULT = "tpl.registerResult";
+	public static final String REGISTER_ACTIVE_SUCCESS = "tpl.registerActiveSuccess";
+	public static final String LOGIN_INPUT = "tpl.loginInput";
 
 	@RequestMapping(value = "/register.jspx", method = RequestMethod.GET)
 	public String input(HttpServletRequest request,
@@ -70,20 +81,74 @@ public class RegisterAct {
 			HttpServletRequest request, HttpServletResponse response,
 			ModelMap model) throws IOException {
 		CmsSite site = CmsUtils.getSite(request);
+		CmsConfig config=site.getConfig();
 		WebErrors errors = validateSubmit(username, email, password, captcha,
 				site, request, response);
 		if (errors.hasErrors()) {
 			return FrontUtils.showError(request, response, model, errors);
 		}
 		String ip = RequestUtils.getIpAddr(request);
-		cmsUserMng.registerMember(username, email, password, ip, null, userExt);
-		log.info("member register success. username={}", username);
-		if (!StringUtils.isBlank(nextUrl)) {
-			response.sendRedirect(nextUrl);
-			return null;
-		} else {
-			return FrontUtils.showMessage(request, model, "global.success");
+		if(config.getEmailValidate()){
+			EmailSender sender = configMng.getEmailSender();
+			MessageTemplate msgTpl = configMng.getRegisterMessageTemplate();
+			if (sender == null) {
+				// 邮件服务器没有设置好
+				model.addAttribute("status", 4);
+			} else if (msgTpl == null) {
+				// 邮件模板没有设置好
+				model.addAttribute("status", 5);
+			} else {
+				try {
+					cmsUserMng.registerMember(username, email, password, ip, null, userExt,
+							false, sender, msgTpl);
+					model.addAttribute("status", 0);
+				} catch (UnsupportedEncodingException e) {
+					// 发送邮件异常
+					model.addAttribute("status", 100);
+					model.addAttribute("message", e.getMessage());
+					log.error("send email exception.", e);
+				}catch (MessagingException e) {
+					// 发送邮件异常
+					model.addAttribute("status", 101);
+					model.addAttribute("message", e.getMessage());
+					log.error("send email exception.", e);
+				}
+			}
+			log.info("member register success. username={}", username);
+			FrontUtils.frontData(request, model, site);
+			if (!StringUtils.isBlank(nextUrl)) {
+				response.sendRedirect(nextUrl);
+				return null;
+			} else {
+				return FrontUtils.getTplPath(request, site.getSolutionPath(),
+						TPLDIR_MEMBER, REGISTER_RESULT);
+			}
+		}else{
+			cmsUserMng.registerMember(username, email, password, ip, null, userExt);
+			log.info("member register success. username={}", username);
+			FrontUtils.frontData(request, model, site);
+			FrontUtils.frontPageData(request, model);
+			model.addAttribute("success",true);
+			return FrontUtils.getTplPath(request, site.getSolutionPath(),
+					TPLDIR_MEMBER, LOGIN_INPUT);
 		}
+		
+	}
+
+	@RequestMapping(value = "/active.jspx", method = RequestMethod.GET)
+	public String active(String username, String key,HttpServletRequest request, 
+			HttpServletResponse response,ModelMap model) throws IOException {
+		CmsSite site = CmsUtils.getSite(request);
+		WebErrors errors = validateActive(username, key, request, response);
+		if (errors.hasErrors()) {
+			return FrontUtils.showError(request, response, model, errors);
+		}
+		UnifiedUser user = unifiedUserMng.active(username, key);
+		String ip = RequestUtils.getIpAddr(request);
+		authMng.activeLogin(user, ip, request, response, session);
+		FrontUtils.frontData(request, model, site);
+		return FrontUtils.getTplPath(request, site.getSolutionPath(),
+				TPLDIR_MEMBER, REGISTER_ACTIVE_SUCCESS);
 	}
 
 	@RequestMapping(value = "/username_unique.jspx")
@@ -147,6 +212,10 @@ public class RegisterAct {
 				mcfg.getUsernameMinLen(), 100)) {
 			return errors;
 		}
+		if (errors.ifNotUsername(username, "username",
+				mcfg.getUsernameMinLen(), 100)) {
+			return errors;
+		}
 		if (errors.ifOutOfLength(password, "password",
 				mcfg.getPasswordMinLen(), 100)) {
 			return errors;
@@ -167,6 +236,31 @@ public class RegisterAct {
 		return errors;
 	}
 
+	private WebErrors validateActive(String username, String activationCode,
+			HttpServletRequest request, HttpServletResponse response) {
+		WebErrors errors = WebErrors.create(request);
+		if (StringUtils.isBlank(username)
+				|| StringUtils.isBlank(activationCode)) {
+			errors.addErrorCode("error.exceptionParams");
+			return errors;
+		}
+		UnifiedUser user = unifiedUserMng.getByUsername(username);
+		if (user == null) {
+			errors.addErrorCode("error.usernameNotExist");
+			return errors;
+		}
+		if (user.getActivation()
+				|| StringUtils.isBlank(user.getActivationCode())) {
+			errors.addErrorCode("error.usernameActivated");
+			return errors;
+		}
+		if (!user.getActivationCode().equals(activationCode)) {
+			errors.addErrorCode("error.exceptionActivationCode");
+			return errors;
+		}
+		return errors;
+	}
+
 	@Autowired
 	private UnifiedUserMng unifiedUserMng;
 	@Autowired
@@ -175,5 +269,8 @@ public class RegisterAct {
 	private SessionProvider session;
 	@Autowired
 	private ImageCaptchaService imageCaptchaService;
-
+	@Autowired
+	private ConfigMng configMng;
+	@Autowired
+	private AuthenticationMng authMng;
 }

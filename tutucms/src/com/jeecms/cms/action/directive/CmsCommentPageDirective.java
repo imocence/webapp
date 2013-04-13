@@ -30,7 +30,7 @@ import freemarker.template.TemplateModel;
 /**
  * 评论分页标签
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class CmsCommentPageDirective extends AbstractCmsCommentDirective {

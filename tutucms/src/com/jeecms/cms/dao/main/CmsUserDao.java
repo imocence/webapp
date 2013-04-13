@@ -9,13 +9,16 @@ import com.jeecms.common.page.Pagination;
 /**
  * 用户DAO接口
  * 
- * @author coco
+ * @author liufang
  * 
  */
-public interface CmsUserDao {
+public interface CmsUserDao{
 	public Pagination getPage(String username, String email, Integer siteId,
 			Integer groupId, Boolean disabled, Boolean admin, Integer rank,
 			int pageNo, int pageSize);
+	
+	public List getList(String username, String email, Integer siteId,
+			Integer groupId, Boolean disabled, Boolean admin, Integer rank);
 
 	public List<CmsUser> getAdminList(Integer siteId, Boolean allChannel,
 			Boolean disabled, Integer rank);
@@ -25,6 +28,8 @@ public interface CmsUserDao {
 	public CmsUser findByUsername(String username);
 
 	public int countByUsername(String username);
+	
+	public int countMemberByUsername(String username);
 
 	public int countByEmail(String email);
 

@@ -41,7 +41,7 @@ import com.jeecms.core.manager.DbFileMng;
  * 
  * 为了更好、更灵活的处理fck上传，重新实现FCK服务器端接口。
  * 
- * @author coco
+ * @author liufang
  * 
  */
 @Controller
@@ -63,6 +63,7 @@ public class FckAct {
 			@RequestParam(value = "mark", required = false) Boolean mark,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
+		System.out.println("fck upload.........");
 		log.debug("Entering Dispatcher#doPost");
 		responseInit(response);
 		if (Utils.isEmpty(commandStr) && Utils.isEmpty(currentFolderStr)) {

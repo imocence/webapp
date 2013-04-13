@@ -7,7 +7,7 @@ import com.jeecms.cms.entity.main.Content;
 /**
  * ContentListener的抽象实现
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class ContentListenerAbstract implements ContentListener {

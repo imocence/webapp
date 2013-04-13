@@ -107,6 +107,7 @@ public abstract class BaseCmsConfig  implements Serializable {
 	private java.util.Date countCopyTime;
 	private java.lang.String downloadCode;
 	private java.lang.Integer downloadTime;
+	private java.lang.Boolean emailValidate;
 
 	// components
 	 com.jeecms.cms.entity.main.MarkConfig m_markConfig;
@@ -329,7 +330,15 @@ public abstract class BaseCmsConfig  implements Serializable {
 	public void setDownloadTime (java.lang.Integer downloadTime) {
 		this.downloadTime = downloadTime;
 	}
+	
 
+	public java.lang.Boolean getEmailValidate() {
+		return emailValidate;
+	}
+
+	public void setEmailValidate(java.lang.Boolean emailValidate) {
+		this.emailValidate = emailValidate;
+	}
 
 	public com.jeecms.cms.entity.main.MarkConfig getMarkConfig () {
 		return m_markConfig;

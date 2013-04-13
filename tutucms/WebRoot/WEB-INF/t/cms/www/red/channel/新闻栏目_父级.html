@@ -10,10 +10,16 @@
 <script src="${resSys}/front.js" type="text/javascript"></script>
 <link href="/${res}/css/layout.css" rel="stylesheet" type="text/css"/>
 <script src="/${res}/js/common.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function() {
+  Cms.siteFlow("${base}",location.href, document.referrer);
+});
+</script>
 </head>
 
 <body>
 <!--top_begin-->
+[#include "../include/页头顶栏.html"/]
 [#include "../include/页头顶栏.html"/]
 <!--top_end-->
 
@@ -27,7 +33,7 @@
 
 <!--body_begin-->
 <div id="main">
-<div class="page"><img src="/${res}/img/banner1.jpg" /></div>
+<div class="page"><script type="text/javascript" src="${base}/adspace.jspx?id=2"></script></div>
 
 <div class="page2 position"> 您现在正在浏览： <a href="${base}/">首页</a> &raquo; [#list channel.nodeList as n]<a href="${n.url}" target="_blank">${n.name}</a>[#if n_has_next] &raquo; [/#if][/#list]</div>
 

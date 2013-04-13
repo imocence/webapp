@@ -14,7 +14,7 @@ import com.jeecms.common.security.UsernameNotFoundException;
  * </p>
  * 
  * @author Ben Alex
- * @version $Id: UserDetailsService.java,v 1.1 2010/03/23 06:30:36 coco Exp $
+ * @version $Id: UserDetailsService.java,v 1.1 2011/12/06 01:36:08 administrator Exp $
  */
 public interface UserDetailsService {
 	// ~ Methods

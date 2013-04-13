@@ -7,7 +7,7 @@ import com.jeecms.cms.entity.main.CmsModel;
 /**
  * 模型Manager接口
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface CmsModelMng {

@@ -56,14 +56,14 @@ function disChannels(chk) {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>:  <@s.m "cmsAdminLocal.function"/> - <@s.m "global.edit"/></div>
 	<form class="ropt">
-		<input type="button" value="<@s.m "global.backToList"/>" onclick="history.back();"/>
+		<input type="button" value="<@s.m "global.backToList"/>" onclick="history.back();" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_update.do" labelWidth="12">
 <@p.td width="50" colspan="1" label="cmsUser.username">${cmsAdmin.username}</@p.td>
 <@p.text width="50" colspan="1" label="cmsUser.email" name="email" value=cmsAdmin.email size="30" maxlength="100" class="email"/><@p.tr/>
@@ -82,7 +82,7 @@ function disChannels(chk) {
 <@p.checkboxlist colspan="2" label="cmsUser.role" name="roleIds" valueList=roleIds list=roleList listKey="id" listValue="name"/><@p.tr/>
 <@p.td colspan="2" label="cmsUser.checkStep" required="true">
 	<@p.text name="steps" value=userSite.checkStep class="required digits" style="width:40px"/>	
-	<input id="channel" type="button" value="<@s.m "cmsUser.channels"/>"/>	
+	<input class="channel-right" id="channel" type="button" value="<@s.m "cmsUser.channels"/>"/>
 	<input type="hidden" id="allChannel" name="allChannels" value="${userSite.allChannel?string('true','false')}"/>
 	<span id="channelIdsContainer"><#list cmsAdmin.getChannelIds(site.id) as cid><input type="hidden" name="channelIds" value="${cid}"/></#list></span>
 	<div id="channelDialog" title="<@s.m "cmsUser.channels"/>(${site.name})" style="display:none;">

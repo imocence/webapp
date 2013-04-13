@@ -8,6 +8,11 @@ import com.jeecms.cms.entity.main.Content;
 import com.jeecms.cms.entity.main.ContentExt;
 import com.jeecms.cms.entity.main.ContentTxt;
 import com.jeecms.cms.entity.main.Content.ContentStatus;
+import com.jeecms.cms.staticpage.exception.ContentNotCheckedException;
+import com.jeecms.cms.staticpage.exception.GeneratedZeroStaticPageException;
+import com.jeecms.cms.staticpage.exception.StaticPageNotOpenException;
+import com.jeecms.cms.staticpage.exception.TemplateNotFoundException;
+import com.jeecms.cms.staticpage.exception.TemplateParseException;
 import com.jeecms.common.page.Pagination;
 
 public interface ContentMng {
@@ -132,4 +137,13 @@ public interface ContentMng {
 	public Content deleteById(Integer id);
 
 	public Content[] deleteByIds(Integer[] ids);
+
+	public Content[] contentStatic(Integer[] ids)
+			throws TemplateNotFoundException, TemplateParseException,
+			GeneratedZeroStaticPageException, StaticPageNotOpenException,
+			ContentNotCheckedException;
+	
+	public Pagination getPageForCollection(Integer siteId, Integer memberId, int pageNo, int pageSize);
+	
+	public void updateFileByContent(Content bean,Boolean valid);
 }

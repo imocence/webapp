@@ -32,7 +32,7 @@ import com.jeecms.core.manager.AuthenticationMng;
  * 
  * 包括登录信息、权限信息、站点信息
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class AdminContextInterceptor extends HandlerInterceptorAdapter {
@@ -195,7 +195,7 @@ public class AdminContextInterceptor extends HandlerInterceptorAdapter {
 				if (site != null) {
 					// 若使用参数选择站点，则应该把站点保存至cookie中才好。
 					CookieUtils.addCookie(request, response, SITE_COOKIE, site
-							.getId().toString(), null);
+							.getId().toString(), null, null);
 					return site;
 				}
 			} catch (NumberFormatException e) {

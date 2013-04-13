@@ -1,8 +1,5 @@
 <div class="comment">
-  <h2><span>网友评论</span> 已有 <em>${content.comments}</em> 条评论，<a href="${base}/comment.jspx?contentId=${content.id}" target="_blank">查看更多评论&raquo;</a></h2>
-  <div class="w98">
-  [#include "inc_comment_list.html"/] 
-  </div>
+  <h2>网友评论 已有 <em>${content.commentsCheckedNum!}</em> 条评论，<a href="${base}/comment.jspx?contentId=${content.id}" target="_blank">查看更多评论&raquo;</a></h2>
   [#if content.channel.commentControl==0 || (content.channel.commentControl==1 && user??)]
   <div class="w98" style="margin-top:5px;"> 
   <form id="commentForm" action="${base}/comment.jspx" method="post">

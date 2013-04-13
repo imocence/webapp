@@ -31,4 +31,15 @@
 		</property>		
 		<qualifier value="contentCount"/>
 	</bean>
+	
+	<!--站点流量缓存-->
+	<bean id="ehCmsSiteFlowCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager">
+			<ref local="cacheManager"/>
+		</property>
+		<property name="cacheName">
+			<value>com.jeecms.cms.front.CmsSiteFlow</value>
+		</property>		
+		<qualifier value="cmsSiteFlow"/>
+	</bean>
 </beans>

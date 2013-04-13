@@ -20,7 +20,7 @@ import java.util.Map;
  * <li>QuickUpload</li>
  *</ul>
  * 
- * @version $Id: Command.java,v 1.1 2010/03/23 06:30:36 coco Exp $
+ * @version $Id: Command.java,v 1.1 2011/12/06 01:36:06 administrator Exp $
  */
 public class Command {
 

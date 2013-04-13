@@ -221,7 +221,6 @@ FCKeditor.prototype._HTMLEncode = function( text )
 		/"/g, "&quot;").replace(
 		/</g, "&lt;").replace(
 		/>/g, "&gt;") ;
-
 	return text ;
 }
 

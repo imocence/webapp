@@ -26,7 +26,7 @@ import freemarker.template.TemplateModel;
 /**
  * 内容标签基类
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public abstract class AbstractContentDirective implements
@@ -278,7 +278,7 @@ public abstract class AbstractContentDirective implements
 	protected int getOrderBy(Map<String, TemplateModel> params)
 			throws TemplateException {
 		Integer orderBy = DirectiveUtils.getInt(PARAM_ORDER_BY, params);
-		if (orderBy == null || orderBy < 0 || orderBy > 8) {
+		if (orderBy == null) {
 			return 0;
 		} else {
 			return orderBy;

@@ -2,12 +2,15 @@ package com.jeecms.cms.entity.main;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.jeecms.cms.entity.main.base.BaseCmsGroup;
+import com.jeecms.common.hibernate3.PriorityComparator;
 import com.jeecms.common.hibernate3.PriorityInterface;
 
 public class CmsGroup extends BaseCmsGroup implements PriorityInterface {
@@ -72,6 +75,45 @@ public class CmsGroup extends BaseCmsGroup implements PriorityInterface {
 		if (getRegDef() == null) {
 			setRegDef(false);
 		}
+	}
+	public Set<Integer> getViewChannelIds(Integer siteId) {
+		Set<Channel> channels = getViewChannels();
+		Set<Integer> ids = new HashSet<Integer>();
+		for (Channel c : channels) {
+			if (c.getSite().getId().equals(siteId)) {
+				ids.add(c.getId());
+			}
+		}
+		return ids;
+	}
+	public Set<Integer> getContriChannelIds(Integer siteId) {
+		Set<Channel> channels = getContriChannels();
+		Set<Integer> ids = new HashSet<Integer>();
+		for (Channel c : channels) {
+			if (c.getSite().getId().equals(siteId)) {
+				ids.add(c.getId());
+			}
+		}
+		return ids;
+	}
+	public void addToViewChannels(Channel channel) {
+		Set<Channel> channels = getViewChannels();
+		if (channels == null) {
+			channels = new TreeSet<Channel>(new PriorityComparator());
+			setViewChannels(channels);
+		}
+		channels.add(channel);
+		channel.getViewGroups().add(this);
+	}
+
+	public void addToContriChannels(Channel channel) {
+		Set<Channel> channels = getContriChannels();
+		if (channels == null) {
+			channels = new TreeSet<Channel>(new PriorityComparator());
+			setContriChannels(channels);
+		}
+		channels.add(channel);
+		channel.getContriGroups().add(this);
 	}
 
 	/* [CONSTRUCTOR MARKER BEGIN] */

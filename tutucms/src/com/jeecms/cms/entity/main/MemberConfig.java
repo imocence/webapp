@@ -48,6 +48,14 @@ public class MemberConfig {
 	 * 密码最小长度
 	 */
 	public static String PASSWORD_MIN_LEN = "password_min_len";
+	/**
+	 * 用户头像宽度
+	 */
+	public static String USERIMG_WIDTH = "user_img_width";
+	/**
+	 * 用户头像高度
+	 */
+	public static String USERIMG_HEIGHT= "user_img_height";
 
 	/**
 	 * 是否开启用户注册
@@ -175,6 +183,57 @@ public class MemberConfig {
 	 */
 	public void setPasswordMinLen(int len) {
 		getAttr().put(PASSWORD_MIN_LEN, String.valueOf(len));
+	}
+	
+	/**
+	 * 获取用户头像宽度
+	 * 
+	 * @return
+	 */
+	public int getUserImgWidth(){
+		String len = getAttr().get(USERIMG_WIDTH);
+		if (!StringUtils.isBlank(len)) {
+			try {
+				return Integer.valueOf(len);
+			} catch (NumberFormatException e) {
+			}
+		}
+		// 默认最小长度为3
+		return 143;
+	}
+
+	/**
+	 * 设置用户头像高宽度
+	 * 
+	 * @param width
+	 */
+	public void setUserImgWidth(int width) {
+		getAttr().put(USERIMG_WIDTH, String.valueOf(width));
+	}
+	/**
+	 * 获取用户头像高度
+	 * 
+	 * @return
+	 */
+	public int getUserImgHeight(){
+		String len = getAttr().get(USERIMG_HEIGHT);
+		if (!StringUtils.isBlank(len)) {
+			try {
+				return Integer.valueOf(len);
+			} catch (NumberFormatException e) {
+			}
+		}
+		// 默认最小长度为3
+		return 98;
+	}
+
+	/**
+	 * 设置用户头像高高度
+	 * 
+	 * @param height
+	 */
+	public void setUserImgHeight(int height) {
+		getAttr().put(USERIMG_HEIGHT, String.valueOf(height));
 	}
 
 }

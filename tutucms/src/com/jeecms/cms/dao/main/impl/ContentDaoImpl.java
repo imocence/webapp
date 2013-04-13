@@ -8,6 +8,7 @@ import static com.jeecms.cms.entity.main.Content.ContentStatus.prepared;
 import static com.jeecms.cms.entity.main.Content.ContentStatus.recycle;
 import static com.jeecms.cms.entity.main.Content.ContentStatus.rejected;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -64,6 +65,17 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 		} else {
 			appendOrder(f, orderBy);
 		}
+		return find(f, pageNo, pageSize);
+	}
+	
+	public Pagination getPageForCollection(Integer siteId, Integer memberId, int pageNo, int pageSize){
+		Finder f = Finder.create("select bean from Content bean join bean.collectUsers user where user.id=:userId").setParam("userId", memberId);
+		if (siteId != null) {
+			f.append(" and bean.site.id=:siteId");
+			f.setParam("siteId", siteId);
+		}
+		f.append(" and bean.status<>:status");
+		f.setParam("status", ContentCheck.RECYCLE);
 		return find(f, pageNo, pageSize);
 	}
 
@@ -378,7 +390,8 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 
 	private Finder bySiteIds(Integer[] siteIds, Integer[] typeIds,
 			Boolean titleImg, Boolean recommend, String title, int orderBy) {
-		Finder f = Finder.create("select bean from Content bean where 1=1");
+		Finder f = Finder.create("select bean from Content bean");
+		f.append(" join bean.contentExt as ext where 1=1");
 		if (titleImg != null) {
 			f.append(" and bean.hasTitleImg=:titleImg");
 			f.setParam("titleImg", titleImg);
@@ -387,6 +400,7 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 			f.append(" and bean.recommend=:recommend");
 			f.setParam("recommend", recommend);
 		}
+		appendReleaseDate(f);
 		appendTypeIds(f, typeIds);
 		appendSiteIds(f, siteIds);
 		f.append(" and bean.status=" + ContentCheck.CHECKED);
@@ -406,6 +420,7 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 		// 如果多个栏目
 		if (option == 0 || len > 1) {
 			f.append("select bean from Content bean");
+			f.append(" join bean.contentExt as ext");
 			if (len == 1) {
 				f.append(" where bean.channel.id=:channelId");
 				f.setParam("channelId", channelIds[0]);
@@ -416,6 +431,7 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 		} else if (option == 1) {
 			// 包含子栏目
 			f.append("select bean from Content bean");
+			f.append(" join bean.contentExt as ext");
 			f.append(" join bean.channel node,Channel parent");
 			f.append(" where node.lft between parent.lft and parent.rgt");
 			f.append(" and bean.site.id=parent.site.id");
@@ -424,6 +440,7 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 		} else if (option == 2) {
 			// 包含副栏目
 			f.append("select bean from Content bean");
+			f.append(" join bean.contentExt as ext");
 			f.append(" join bean.channels as channel");
 			f.append(" where channel.id=:channelId");
 			f.setParam("channelId", channelIds[0]);
@@ -438,6 +455,7 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 			f.append(" and bean.recommend=:recommend");
 			f.setParam("recommend", recommend);
 		}
+		appendReleaseDate(f);
 		appendTypeIds(f, typeIds);
 		f.append(" and bean.status=" + ContentCheck.CHECKED);
 		if (!StringUtils.isBlank(title)) {
@@ -453,6 +471,7 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 			String title, int orderBy) {
 		Finder f = Finder.create();
 		f.append("select bean from Content bean join bean.channel channel");
+		f.append(" join bean.contentExt as ext");
 		int len = paths.length;
 		if (len == 1) {
 			f.append(" where channel.path=:path").setParam("path", paths[0]);
@@ -478,6 +497,7 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 			f.append(" and bean.recommend=:recommend");
 			f.setParam("recommend", recommend);
 		}
+		appendReleaseDate(f);
 		appendTypeIds(f, typeIds);
 		f.append(" and bean.status=" + ContentCheck.CHECKED);
 		if (!StringUtils.isBlank(title)) {
@@ -493,8 +513,8 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 			Boolean recommend, String title, int orderBy) {
 		Finder f = Finder.create();
 		f.append("select bean from Content bean join bean.topics topic");
+		f.append(" join bean.contentExt as ext");
 		f.append(" where topic.id=:topicId").setParam("topicId", topicId);
-
 		if (titleImg != null) {
 			f.append(" and bean.hasTitleImg=:titleImg");
 			f.setParam("titleImg", titleImg);
@@ -503,6 +523,7 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 			f.append(" and bean.recommend=:recommend");
 			f.setParam("recommend", recommend);
 		}
+		appendReleaseDate(f);
 		appendTypeIds(f, typeIds);
 		appendChannelIds(f, channelIds);
 		appendSiteIds(f, siteIds);
@@ -522,9 +543,11 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 		int len = tagIds.length;
 		if (len == 1) {
 			f.append("select bean from Content bean join bean.tags tag");
+			f.append(" join bean.contentExt as ext");
 			f.append(" where tag.id=:tagId").setParam("tagId", tagIds[0]);
 		} else {
 			f.append("select distinct bean from Content bean");
+			f.append(" join bean.contentExt as ext");
 			f.append(" join bean.tags tag");
 			f.append(" where tag.id in(:tagIds)");
 			f.setParamList("tagIds", tagIds);
@@ -537,6 +560,7 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 			f.append(" and bean.recommend=:recommend");
 			f.setParam("recommend", recommend);
 		}
+		appendReleaseDate(f);
 		appendTypeIds(f, typeIds);
 		appendChannelIds(f, channelIds);
 		appendSiteIds(f, siteIds);
@@ -551,6 +575,11 @@ public class ContentDaoImpl extends HibernateBaseDao<Content, Integer>
 		}
 		appendOrder(f, orderBy);
 		return f;
+	}
+
+	private void appendReleaseDate(Finder f) {
+		f.append(" and ext.releaseDate<:currentDate");
+		f.setParam("currentDate", new Date());
 	}
 
 	private void appendTypeIds(Finder f, Integer[] typeIds) {

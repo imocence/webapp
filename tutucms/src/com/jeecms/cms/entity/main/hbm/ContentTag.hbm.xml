@@ -8,4 +8,10 @@
 		<property name="name" column="tag_name" type="string" not-null="true" length="50"/>
 		<property name="count" column="ref_counter" type="integer" not-null="true" length="10"/>
 	</class>
+	<sql-query name="ContentTag.deleteContentRef">
+		delete from jc_contenttag where tag_id=?
+	</sql-query>
+	<sql-query name="ContentTag.countContentRef">
+		select count(*) from jc_contenttag where tag_id=?
+	</sql-query>
 </hibernate-mapping>

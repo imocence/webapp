@@ -15,6 +15,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.jeecms.cms.entity.main.CmsRole;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsRoleMng;
 import com.jeecms.cms.web.WebErrors;
 
@@ -53,6 +54,8 @@ public class CmsRoleAct {
 		}
 		bean = manager.save(bean, splitPerms(perms));
 		log.info("save CmsRole id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsRole.log.save", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return "redirect:v_list.do";
 	}
 
@@ -65,6 +68,8 @@ public class CmsRoleAct {
 		}
 		bean = manager.update(bean, splitPerms(perms));
 		log.info("update CmsRole id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsRole.log.update", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return list(request, model);
 	}
 
@@ -78,6 +83,8 @@ public class CmsRoleAct {
 		CmsRole[] beans = manager.deleteByIds(ids);
 		for (CmsRole bean : beans) {
 			log.info("delete CmsRole id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsRole.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getName());
 		}
 		return list(request, model);
 	}
@@ -139,6 +146,8 @@ public class CmsRoleAct {
 		return set;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsRoleMng manager;
 }

@@ -39,5 +39,25 @@
 			<key column="user_id"/>
 			<many-to-many column="channel_id" class="Channel"/>
 		</set>
+		<set name="collectContents" table="jc_user_collection">
+			<key column="user_id"/>
+			<many-to-many column="content_id" class="Content"/>
+		</set>
+		<set name="sendMessages" inverse="true" cascade="delete">
+			<key column="msg_send_user"/>
+			<one-to-many class="com.jeecms.cms.entity.assist.CmsMessage"/>
+		</set>
+		<set name="receivMessages" inverse="true" cascade="delete">
+			<key column="msg_receiver_user"/>
+			<one-to-many class="com.jeecms.cms.entity.assist.CmsMessage"/>
+		</set>
+		<set name="sendReceiverMessages" inverse="true" cascade="delete">
+			<key column="msg_send_user"/>
+			<one-to-many class="com.jeecms.cms.entity.assist.CmsReceiverMessage"/>
+		</set>
+		<set name="receivReceiverMessages" inverse="true" cascade="delete">
+			<key column="msg_receiver_user"/>
+			<one-to-many class="com.jeecms.cms.entity.assist.CmsReceiverMessage"/>
+		</set>
 	</class>
 </hibernate-mapping>

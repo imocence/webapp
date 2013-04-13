@@ -7,8 +7,6 @@ import org.htmlparser.Node;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.nodes.TextNode;
 import org.htmlparser.util.ParserException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +18,6 @@ import com.jeecms.cms.manager.assist.CmsKeywordMng;
 @Service
 @Transactional
 public class CmsKeywordMngImpl implements CmsKeywordMng {
-	private static final Logger log = LoggerFactory
-			.getLogger(CmsKeywordMngImpl.class);
 
 	@Transactional(readOnly = true)
 	public List<CmsKeyword> getListBySiteId(Integer siteId,

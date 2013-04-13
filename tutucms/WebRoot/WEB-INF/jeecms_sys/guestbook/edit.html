@@ -11,14 +11,14 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>:  <@s.m "cmsGuestbook.function"/> - <@s.m "global.edit"/></div>
 	<form class="ropt">
-		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do';"/>
+		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do';" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_update.do"labelWidth="12">
 <@p.select colspan="2" label="cmsGuestbook.ctg" name="ctgId" value=cmsGuestbook.ctg.id list=ctgList listKey="id" listValue="name" required="true"/><@p.tr/>
 <@p.text colspan="2" label="cmsGuestbook.title" name="title" value=cmsGuestbook.title size="70" maxlength="255"/><@p.tr/>
@@ -31,6 +31,7 @@ $(function() {
 <@p.radio colspan="1" width="50" label="cmsGuestbook.recommend" name="recommend" value=cmsGuestbook.recommend list={"true":"global.true","false":"global.false"}/><@p.tr/>
 <@p.td colspan="2">
 	<@p.hidden name="id" value=cmsGuestbook.id/>
+	<@p.hidden name="oldreply" value=cmsGuestbook.reply/>
 	<@p.submit code="global.submit"/> &nbsp; <@p.reset code="global.reset"/>
 </@p.td>
 </@p.form>

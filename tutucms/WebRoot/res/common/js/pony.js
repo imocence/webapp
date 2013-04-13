@@ -51,9 +51,8 @@ Pn.ColorPicker = function(input) {
 	this.isShow = false;
 	this.target = $(input);
 	this.button = $("<input type='text' tabindex='10000'"
-			+ " readonly='readonly' style='background-color:#fff;width:30px;height:"
-			+ this.target.height()
-			+ "px;border:1px solid #ccc;margin-left:2px;cursor:pointer'/>");
+			+ " readonly='readonly' style='background-color:#fff;width:30px;"
+			+ "border:1px solid #ccc;margin-left:2px;cursor:pointer'/>");
 	this.target.after(this.button);
 	this.over = function() {
 		$(this).css("border", "1px solid #000");

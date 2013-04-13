@@ -43,18 +43,18 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "cmsStatic.function"/> - <@s.m "cmsStatic.channel"/></div>
 	<form class="ropt">
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_channel.do">
 <@p.select label="cmsStatic.channel" name="channelId" list=channelList listKey="id" listValue="name" listDeep="deep" headerKey="" headerValue="cmsStatic.allChannel"/>
 <@p.radio label="cmsStatic.containChild" name="containChild" value="true" list={"true":"global.true","false":"global.false"}/>
 <@p.td>
-	<input id="createButton" type="submit" value="<@s.m "cmsStatic.channelStatic"/>"/>
+	<input class="generate-channel-page" id="createButton" type="submit" value="<@s.m "cmsStatic.channelStatic"/>"/>
 </@p.td>
 </@p.form>
 </div>

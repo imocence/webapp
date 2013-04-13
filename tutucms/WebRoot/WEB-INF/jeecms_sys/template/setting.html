@@ -35,30 +35,34 @@ function importTpl() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "template.function"/> - <@s.m "template.setting"/></div>
 	<form class="ropt">
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm">
 <@cms_perm url="/template/o_def_template.do">
 <@p.td label="template.default">
 	<@p.select id="defSolution" list=solutions value=defSolution/>
-&nbsp; <input type="button" onclick="setDefSolution();" value="<@s.m "template.setting"/>"/>
+&nbsp; <input class="setting" type="button" onclick="setDefSolution();" value="<@s.m "template.setting"/>"/>
 </@p.td><@p.tr/>
 </@cms_perm>
 <@cms_perm url="/template/o_export.do">
 <@p.td label="template.export">
 	<@p.select name="solution" list=solutions value=defSolution/>
-&nbsp; <input type="button" onclick="exportTpl();" value="<@s.m "template.export"/>"/>
+&nbsp; <input class="export" type="button" onclick="exportTpl();" value="<@s.m "template.export"/>"/>
 </@p.td><@p.tr/>
 </@cms_perm>
 <@cms_perm url="/template/o_import.do">
 <@p.td label="template.import">
-	<input type="file" id="tplZip" name="tplZip"/>
-&nbsp; <input type="button" onclick="importTpl();" value="<@s.m "template.import"/>"/>
+<span style="position:relative">
+<input type='text' id='tplZipText'/>  
+<input class="browse" type='button' value='<@s.m "global.browse"/>'/>
+<input onchange="$('#tplZipText').val(this.value)" type="file" id="tplZip" name="tplZip" class="file-button"/>
+</span>
+&nbsp; <input class="import" type="button" onclick="importTpl();" value="<@s.m "template.import"/>"/>
 </@p.td>
 </@cms_perm>
 </@p.form>

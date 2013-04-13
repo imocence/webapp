@@ -26,7 +26,7 @@ import freemarker.template.TemplateModel;
 /**
  * 栏目对象标签
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class ChannelDirective implements TemplateDirectiveModel {

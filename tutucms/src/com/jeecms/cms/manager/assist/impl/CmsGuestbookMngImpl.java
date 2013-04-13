@@ -22,10 +22,10 @@ import com.jeecms.common.page.Pagination;
 @Transactional
 public class CmsGuestbookMngImpl implements CmsGuestbookMng {
 	@Transactional(readOnly = true)
-	public Pagination getPage(Integer siteId, Integer ctgId, Boolean recommend,
+	public Pagination getPage(Integer siteId, Integer ctgId,Integer userId, Boolean recommend,
 			Boolean checked, boolean desc, boolean cacheable, int pageNo,
 			int pageSize) {
-		return dao.getPage(siteId, ctgId, recommend, checked, desc, cacheable,
+		return dao.getPage(siteId, ctgId,userId, recommend, checked, desc, cacheable,
 				pageNo, pageSize);
 	}
 

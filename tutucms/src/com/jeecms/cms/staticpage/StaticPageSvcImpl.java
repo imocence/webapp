@@ -39,7 +39,7 @@ import freemarker.template.TemplateException;
 public class StaticPageSvcImpl implements StaticPageSvc, InitializingBean {
 	private Logger log = LoggerFactory.getLogger(StaticPageSvcImpl.class);
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public int content(Integer siteId, Integer channelId, Date start)
 			throws IOException, TemplateException {
 		long time = System.currentTimeMillis();
@@ -51,13 +51,14 @@ public class StaticPageSvcImpl implements StaticPageSvc, InitializingBean {
 		return count;
 	}
 
-	@Transactional(readOnly = true)
-	public void content(Content content) throws IOException, TemplateException {
+	@Transactional
+	public boolean content(Content content) throws IOException, TemplateException {
 		Map<String, Object> data = new HashMap<String, Object>();
 		long time = System.currentTimeMillis();
-		staticPageDao.contentStatic(content, conf, data);
+		boolean generated = staticPageDao.contentStatic(content, conf, data);
 		time = System.currentTimeMillis() - time;
 		log.info("create content page in {} ms", time);
+		return generated;
 	}
 
 	@Transactional(readOnly = true)

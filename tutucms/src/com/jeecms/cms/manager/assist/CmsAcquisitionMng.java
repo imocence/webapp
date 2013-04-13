@@ -3,6 +3,9 @@ package com.jeecms.cms.manager.assist;
 import java.util.List;
 
 import com.jeecms.cms.entity.assist.CmsAcquisition;
+import com.jeecms.cms.entity.assist.CmsAcquisitionHistory;
+import com.jeecms.cms.entity.assist.CmsAcquisitionTemp;
+import com.jeecms.cms.entity.assist.CmsAcquisition.AcquisitionResultType;
 import com.jeecms.cms.entity.main.Content;
 
 public interface CmsAcquisitionMng {
@@ -31,5 +34,21 @@ public interface CmsAcquisitionMng {
 
 	public CmsAcquisition[] deleteByIds(Integer[] ids);
 
-	public Content saveContent(String title, String txt, Integer acquId);
+	public Content saveContent(String title, String txt, Integer acquId,
+			AcquisitionResultType resultType, CmsAcquisitionTemp temp,
+			CmsAcquisitionHistory history);
+
+	public CmsAcquisition getStarted(Integer siteId);
+	
+	public Integer getMaxQueue(Integer siteId);
+
+	public Integer hasStarted(Integer siteId);
+	
+	public void addToQueue(Integer[] ids, Integer queueNum);
+	
+	public void cancel(Integer siteId, Integer id);
+	
+	public List<CmsAcquisition> getLargerQueues(Integer siteId, Integer queueNum);
+	
+	public CmsAcquisition popAcquFromQueue(Integer siteId);
 }

@@ -47,13 +47,13 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "cmsLucene.function"/></div>
 	<form class="ropt">
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_create.do">
 <@p.select label="cmsLucene.channelId" id="channelId" name="channelId" list=channelList listKey="id" listValue="name" listDeep="deep" headerKey="" headerValue="cmsLucene.allChannel"/>
 <@p.text label="cmsLucene.startDate" id="startDate" name="startDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="Wdate"/>
@@ -63,8 +63,8 @@ $(function() {
 	<input type="hidden" id="siteId" name="siteId" value="${site.id}"/>
 	<input type="hidden" id="startId" name="startId"/>
 	<input type="hidden" id="stop" value=""/>
-	<input type="submit" id="submitButton" value="<@s.m "cmsLucene.createIndex"/>"/>
-&nbsp; <input type="button" id="cancelButton" value="<@s.m "global.cancel"/>" disabled="disabled" onclick="$('#stop').val('1')"/>
+	<input class="generate-index" type="submit" id="submitButton" value="<@s.m "cmsLucene.createIndex"/>"/>
+&nbsp; <input class="cancel" type="button" id="cancelButton" value="<@s.m "global.cancel"/>" disabled="disabled" onclick="$('#stop').val('1')"/>
 </@p.td>
 </@p.form>
 </div>

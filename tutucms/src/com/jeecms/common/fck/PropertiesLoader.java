@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * Moreover, you can set properties programmatically too but make sure to
  * override them <em>before</em> the first call of that specific property.
  * 
- * @version $Id: PropertiesLoader.java,v 1.1 2010/03/23 06:30:36 coco Exp $
+ * @version $Id: PropertiesLoader.java,v 1.1 2011/12/06 01:36:06 administrator Exp $
  */
 public class PropertiesLoader {
 	private static final Logger logger = LoggerFactory

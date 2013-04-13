@@ -71,14 +71,14 @@ function disChannels(chk,i) {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "cmsAdminGlobal.function"/> - <@s.m "global.add"/></div>
 	<form class="ropt">
-		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do';"/>
+		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do';" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <#assign usernameExist><@s.m "error.usernameExist"/></#assign>
 <@p.form id="jvForm" action="o_save.do" labelWidth="12">
 <@p.text width="50" colspan="1" label="cmsUser.username" name="username" required="true" maxlength="100" vld="{required:true,username:true,remote:'v_check_username.do',messages:{remote:'${usernameExist}'}}"/>
@@ -97,7 +97,7 @@ function disChannels(chk,i) {
 <div style="float:left;padding-right:3px">
 	<label><input type="checkbox" name="siteIds" value="${site.id}"<#if site_index==0> checked="checked"</#if> onclick="disSite(this.checked,${site_index})"/>${site.shortName}</label>
 	<input id="step${site_index}" type="text" name="steps" value="1" min="1" max="127" class="required digits" style="width:40px"<#if site_index!=0> disabled="disabled"</#if>/>
-	<input id="channel${site_index}" type="button" value="<@s.m "cmsUser.channels"/>"<#if site_index!=0> disabled="disabled"</#if>/>	
+	<input class="channel-right" id="channel${site_index}" type="button" value="<@s.m "cmsUser.channels"/>"<#if site_index!=0> disabled="disabled"</#if>/>	
 	<input type="hidden" id="allChannel${site_index}" name="allChannels" value="true"<#if site_index!=0> disabled="disabled"</#if>/>
 	<span id="channelIdsContainer${site_index}"></span>
 	<div id="channelDialog${site_index}" title="<@s.m "cmsUser.channels"/>(${site.name})" style="display:none;">

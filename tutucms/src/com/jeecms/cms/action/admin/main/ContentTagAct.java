@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.entity.main.ContentTag;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.ContentTagMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
@@ -67,6 +68,8 @@ public class ContentTagAct {
 		}
 		bean = manager.save(bean);
 		log.info("save ContentTag id={}", bean.getId());
+		cmsLogMng.operating(request, "contentTag.log.save", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return "redirect:v_list.do";
 	}
 
@@ -79,6 +82,8 @@ public class ContentTagAct {
 		}
 		bean = manager.update(bean);
 		log.info("update ContentTag id={}.", bean.getId());
+		cmsLogMng.operating(request, "contentTag.log.update", "id="
+				+ bean.getId() + ";name=" + bean.getName());
 		return list(pageNo, request, model);
 	}
 
@@ -92,6 +97,8 @@ public class ContentTagAct {
 		ContentTag[] beans = manager.deleteByIds(ids);
 		for (ContentTag bean : beans) {
 			log.info("delete ContentTag id={}", bean.getId());
+			cmsLogMng.operating(request, "contentTag.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getName());
 		}
 		return list(pageNo, request, model);
 	}
@@ -140,6 +147,8 @@ public class ContentTagAct {
 		return false;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private ContentTagMng manager;
 }

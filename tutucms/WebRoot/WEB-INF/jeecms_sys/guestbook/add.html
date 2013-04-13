@@ -11,14 +11,14 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "cmsGuestbook.function"/> - <@s.m "global.add"/></div>
 	<form class="ropt">
-		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do';"/>
+		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do';" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_save.do" labelWidth="12">
 <@p.select colspan="2" label="cmsGuestbook.ctg" name="ctgId" list=ctgList listKey="id" listValue="name" required="true"/><@p.tr/>
 <@p.text colspan="2" label="cmsGuestbook.title" name="title" size="70" maxlength="255"/><@p.tr/>

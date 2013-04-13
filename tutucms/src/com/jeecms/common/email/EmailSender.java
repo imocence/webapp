@@ -3,7 +3,7 @@ package com.jeecms.common.email;
 /**
  * 邮件发送者
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface EmailSender {
@@ -13,6 +13,13 @@ public interface EmailSender {
 	 * @return
 	 */
 	public String getHost();
+
+	/**
+	 * 发送服务器端口
+	 * 
+	 * @return
+	 */
+	public Integer getPort();
 
 	/**
 	 * 发送编码

@@ -255,6 +255,7 @@ function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 			alert( 'A file with the same name is already available. The uploaded file has been renamed to "' + fileName + '"' ) ;
 			break ;
 		case 202 :
+			alert("falsh");
 			alert( 'Invalid file type' ) ;
 			return ;
 		case 203 :

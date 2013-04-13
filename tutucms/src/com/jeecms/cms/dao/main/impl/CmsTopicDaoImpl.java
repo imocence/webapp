@@ -89,9 +89,8 @@ public class CmsTopicDaoImpl extends HibernateBaseDao<CmsTopic, Integer>
 	}
 
 	public int deleteContentRef(Integer id) {
-		String sql = "delete from jc_content_topic where topic_id=?";
-		return getSession().createSQLQuery(sql).setParameter(0, id)
-				.executeUpdate();
+		Query query = getSession().getNamedQuery("CmsTopic.deleteContentRef");
+		return query.setParameter(0, id).executeUpdate();
 	}
 
 	public int countByChannelId(Integer channelId) {

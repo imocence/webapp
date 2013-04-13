@@ -53,6 +53,6 @@ public abstract class LuceneDirectiveAbstract implements TemplateDirectiveModel 
 
 	protected Date getEndDate(Map<String, TemplateModel> params)
 			throws TemplateException {
-		return DirectiveUtils.getDate(PARAM_START_DATE, params);
+		return DirectiveUtils.getDate(PARAM_END_DATE, params);
 	}
 }

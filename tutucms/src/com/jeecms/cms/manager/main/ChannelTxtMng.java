@@ -8,7 +8,7 @@ import com.jeecms.cms.entity.main.ChannelTxt;
  * 
  * '栏目'数据存在，'栏目文本'数据可以不存在，所以在save和update中需要处理这个问题。
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface ChannelTxtMng {

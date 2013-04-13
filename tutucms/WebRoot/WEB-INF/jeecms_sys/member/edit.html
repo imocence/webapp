@@ -11,14 +11,14 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>:  <@s.m "cmsMember.function"/> - <@s.m "global.edit"/></div>
 	<form class="ropt">
-		<input type="button" value="<@s.m "global.backToList"/>" onclick="history.back();"/>
+		<input type="button" value="<@s.m "global.backToList"/>" onclick="history.back();" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_update.do" labelWidth="12">
 <@p.td width="50" colspan="1" label="cmsUser.username">${cmsMember.username}<#if cmsMember.admin> &nbsp; <span style="color:red">[<@s.m "cmsUser.admin"/>]</span></#if></@p.td>
 <@p.text width="50" colspan="1" label="cmsUser.email" name="email" value=cmsMember.email size="30" class="email"/><@p.tr/>
@@ -36,7 +36,7 @@ $(function() {
 <@p.text width="50" colspan="1" label="cmsUser.qq" name="qq" value=cmsMember.qq maxlength="100"/>
 <@p.text width="50" colspan="1" label="cmsUser.msn" name="msn" value=cmsMember.msn maxlength="100"/><@p.tr/>
 <@p.text width="50" colspan="1" label="cmsUser.phone" name="phone" value=cmsMember.phone maxlength="50"/>
-<@p.text width="50" colspan="1" label="cmsUser.moble" name="moble" value=cmsMember.moble maxlength="50"/><@p.tr/>
+<@p.text width="50" colspan="1" label="cmsUser.mobile" name="mobile" value=cmsMember.mobile maxlength="50"/><@p.tr/>
 <@p.textarea colspan="2" label="cmsUser.intro" name="intro" value=cmsMember.intro maxlength="255" cols="70" rows="5"/><@p.tr/>
 <@p.td colspan="2">
 	<@p.hidden name="id" value=cmsMember.id/>

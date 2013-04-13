@@ -15,10 +15,10 @@ import java.io.Serializable;
 public abstract class BaseCmsUserExt  implements Serializable {
 
 	public static String REF = "CmsUserExt";
-	public static String PROP_MOBLE = "moble";
 	public static String PROP_MSN = "msn";
 	public static String PROP_BIRTHDAY = "birthday";
 	public static String PROP_GENDER = "gender";
+	public static String PROP_MOBILE = "mobile";
 	public static String PROP_COMEFROM = "comefrom";
 	public static String PROP_USER = "user";
 	public static String PROP_INTRO = "intro";
@@ -59,7 +59,9 @@ public abstract class BaseCmsUserExt  implements Serializable {
 	private java.lang.String qq;
 	private java.lang.String msn;
 	private java.lang.String phone;
-	private java.lang.String moble;
+	private java.lang.String mobile;
+	private java.lang.String userImg;
+	private java.lang.String userSignature;
 
 	// one to one
 	private com.jeecms.cms.entity.main.CmsUser user;
@@ -217,18 +219,33 @@ public abstract class BaseCmsUserExt  implements Serializable {
 
 
 	/**
-	 * Return the value associated with the column: moble
+	 * Return the value associated with the column: mobile
 	 */
-	public java.lang.String getMoble () {
-		return moble;
+	public java.lang.String getMobile () {
+		return mobile;
 	}
 
 	/**
-	 * Set the value related to the column: moble
-	 * @param moble the moble value
+	 * Set the value related to the column: mobile
+	 * @param mobile the mobile value
 	 */
-	public void setMoble (java.lang.String moble) {
-		this.moble = moble;
+	public void setMobile (java.lang.String mobile) {
+		this.mobile = mobile;
+	}
+	public java.lang.String getUserImg() {
+		return userImg;
+	}
+
+	public void setUserImg(java.lang.String userImg) {
+		this.userImg = userImg;
+	}
+
+	public java.lang.String getUserSignature() {
+		return userSignature;
+	}
+
+	public void setUserSignature(java.lang.String userSignature) {
+		this.userSignature = userSignature;
 	}
 
 

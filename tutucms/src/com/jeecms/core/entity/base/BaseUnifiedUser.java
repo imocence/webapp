@@ -15,17 +15,22 @@ import java.io.Serializable;
 public abstract class BaseUnifiedUser  implements Serializable {
 
 	public static String REF = "UnifiedUser";
-	public static String PROP_LOGIN_COUNT = "loginCount";
-	public static String PROP_REGISTER_TIME = "registerTime";
+	public static String PROP_ACTIVATION = "activation";
+	public static String PROP_ERROR_COUNT = "errorCount";
+	public static String PROP_ACTIVATION_CODE = "activationCode";
+	public static String PROP_ERROR_IP = "errorIp";
 	public static String PROP_PASSWORD = "password";
-	public static String PROP_LAST_LOGIN_IP = "lastLoginIp";
-	public static String PROP_EMAIL = "email";
+	public static String PROP_ERROR_TIME = "errorTime";
 	public static String PROP_RESET_KEY = "resetKey";
+	public static String PROP_LOGIN_COUNT = "loginCount";
 	public static String PROP_LAST_LOGIN_TIME = "lastLoginTime";
-	public static String PROP_RESET_PWD = "resetPwd";
+	public static String PROP_EMAIL = "email";
+	public static String PROP_REGISTER_TIME = "registerTime";
+	public static String PROP_USERNAME = "username";
 	public static String PROP_ID = "id";
 	public static String PROP_REGISTER_IP = "registerIp";
-	public static String PROP_USERNAME = "username";
+	public static String PROP_LAST_LOGIN_IP = "lastLoginIp";
+	public static String PROP_RESET_PWD = "resetPwd";
 
 
 	// constructors
@@ -50,7 +55,9 @@ public abstract class BaseUnifiedUser  implements Serializable {
 		java.lang.String password,
 		java.util.Date registerTime,
 		java.lang.String registerIp,
-		java.lang.Integer loginCount) {
+		java.lang.Integer loginCount,
+		java.lang.Integer errorCount,
+		java.lang.Boolean activation) {
 
 		this.setId(id);
 		this.setUsername(username);
@@ -58,6 +65,8 @@ public abstract class BaseUnifiedUser  implements Serializable {
 		this.setRegisterTime(registerTime);
 		this.setRegisterIp(registerIp);
 		this.setLoginCount(loginCount);
+		this.setErrorCount(errorCount);
+		this.setActivation(activation);
 		initialize();
 	}
 
@@ -81,6 +90,11 @@ public abstract class BaseUnifiedUser  implements Serializable {
 	private java.lang.Integer loginCount;
 	private java.lang.String resetKey;
 	private java.lang.String resetPwd;
+	private java.util.Date errorTime;
+	private java.lang.Integer errorCount;
+	private java.lang.String errorIp;
+	private java.lang.Boolean activation;
+	private java.lang.String activationCode;
 
 
 
@@ -263,6 +277,86 @@ public abstract class BaseUnifiedUser  implements Serializable {
 	 */
 	public void setResetPwd (java.lang.String resetPwd) {
 		this.resetPwd = resetPwd;
+	}
+
+
+	/**
+	 * Return the value associated with the column: error_time
+	 */
+	public java.util.Date getErrorTime () {
+		return errorTime;
+	}
+
+	/**
+	 * Set the value related to the column: error_time
+	 * @param errorTime the error_time value
+	 */
+	public void setErrorTime (java.util.Date errorTime) {
+		this.errorTime = errorTime;
+	}
+
+
+	/**
+	 * Return the value associated with the column: error_count
+	 */
+	public java.lang.Integer getErrorCount () {
+		return errorCount;
+	}
+
+	/**
+	 * Set the value related to the column: error_count
+	 * @param errorCount the error_count value
+	 */
+	public void setErrorCount (java.lang.Integer errorCount) {
+		this.errorCount = errorCount;
+	}
+
+
+	/**
+	 * Return the value associated with the column: error_ip
+	 */
+	public java.lang.String getErrorIp () {
+		return errorIp;
+	}
+
+	/**
+	 * Set the value related to the column: error_ip
+	 * @param errorIp the error_ip value
+	 */
+	public void setErrorIp (java.lang.String errorIp) {
+		this.errorIp = errorIp;
+	}
+
+
+	/**
+	 * Return the value associated with the column: activation
+	 */
+	public java.lang.Boolean getActivation () {
+		return activation;
+	}
+
+	/**
+	 * Set the value related to the column: activation
+	 * @param activation the activation value
+	 */
+	public void setActivation (java.lang.Boolean activation) {
+		this.activation = activation;
+	}
+
+
+	/**
+	 * Return the value associated with the column: activation_code
+	 */
+	public java.lang.String getActivationCode () {
+		return activationCode;
+	}
+
+	/**
+	 * Set the value related to the column: activation_code
+	 * @param activationCode the activation_code value
+	 */
+	public void setActivationCode (java.lang.String activationCode) {
+		this.activationCode = activationCode;
 	}
 
 

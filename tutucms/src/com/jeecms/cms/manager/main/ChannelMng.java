@@ -11,7 +11,7 @@ import com.jeecms.common.page.Pagination;
 /**
  * 栏目管理接口
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface ChannelMng {

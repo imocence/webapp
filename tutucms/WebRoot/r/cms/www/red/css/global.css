@@ -14,7 +14,7 @@ img{border:none; float:none;}
 address,caption,cite,code,dfn,em,th,var{font-style:normal;font-weight:400;}
 ol,ul{list-style:none;}
 h1,h2,h3,h4,h5,h6{font-size:100%;}
-body{margin:0;font:12px Verdana, Arial, Helvetica, sans-serif,"����"; color:#42515A; background:url(../img/pbg.jpg) top repeat-x; word-break:break-all;}
+body{margin:0;font:12px Verdana, Arial, Helvetica, sans-serif,"宋体"; color:#42515A; background:url(../img/pbg.jpg) top repeat-x; word-break:break-all;}
 select,input{vertical-align:middle; padding:1px 0;}
 label {cursor:hand;}
 
@@ -22,7 +22,7 @@ label {cursor:hand;}
 ----------------------------------------*/
 a:link, a:visited{color:#333;text-decoration:none;}
 a:hover, a:active{color:#ff3300;text-decoration:underline;}
-.red,a.red:link,a.red:visited{color:#a72d2c;}
+.red,a.red:link,a.red:visited{color:#f54100;}/*内页桔红色字体*/
 .black,a.black:link,a.black:visited{color:#000;}
 .white,a.white:link,a.white:visited{color:#fff; text-decoration:none;}
 a.white:hover{color:#ff0;}
@@ -47,12 +47,19 @@ a.white:hover{color:#ff0;}
 .mt5{margin-top:5px;}
 .mt10{margin-top:10px;}
 .pr10{padding-right:10px;}
+.mr10{margin-right:10px;}
 .box:after{content:"\0020";display:block;height:0;clear:both;}
-
+.mr5{margin-right:5px;}
 .hide{display:none;}
 .block{display:block;}
+.mb10{margin-bottom:10px;}
 
 /* fonts Styles
 ----------------------------------------*/
 .gray{color:#ccc;}
-.red{color:#f54100;}
+.red{color:#ff0000;}
+
+.clear{clear:both; height:0; overflow:hidden;}
+.inline{display:inline;}
+.pagination{height:30px; line-height:30px;; text-align:center; clear:both; margin-top:10px;}
+.u-input{background:url(../img/guestbook/input-bg.gif) repeat-x; height:25px; border:1px solid #babdbd;}

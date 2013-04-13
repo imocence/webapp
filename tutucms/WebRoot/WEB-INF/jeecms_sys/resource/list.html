@@ -49,9 +49,12 @@ window.onload=function() {
 		
 		button_image_url : "${base}/thirdparty/swfupload/button_notext.png",
 		button_placeholder_id : "spanButtonPlaceHolder",
-		button_text: "&nbsp;<@s.m "resource.upload"/>",
-		button_width: 61,
-		button_height: 22,
+		button_text: "<span class='btnText'><@s.m "resource.upload"/></span>",
+		button_width: 81,
+		button_height: 24,
+		button_text_top_padding: 2,
+		button_text_left_padding: 20,
+		button_text_style: '.btnText{color:#666666;}',
 		
 		file_queued_handler : fileQueued,
 		file_queue_error_handler : fileQueueError,
@@ -101,17 +104,18 @@ function hideImage(a) {
 </head>
 <body>
 <div id="sd" style="display:none;position:absolute;height:300px;width:300px"></div>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "resource.function"/> - <@s.m "global.list"/></div>
 	<form class="ropt">
 		<input type="hidden" name="root" value="${root}"/>
 		<@cms_perm url="/resource/v_add.do">
-		<input type="submit" value="<@s.m "resource.create"/>" onclick="this.form.action='v_add.do';"/>
+		<input class="create-file" type="submit" value="<@s.m "resource.create"/>" onclick="this.form.action='v_add.do';"/>
 		</@cms_perm>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
+
 <form method="post" enctype="multipart/form-data">
 <input type="hidden" name="root" value="${root}"/>
 <table border="0" style="padding-top:3px">
@@ -119,12 +123,12 @@ function hideImage(a) {
 	<td><@s.m "resource.currentDir"/>: ${root}</td>
 	<@cms_perm url="/resource/o_swfupload.do">
 	<td width="70" align="center"><span id="spanButtonPlaceHolder"></span></td>
-	<td><input id="btnCancel" type="button" value="<@s.m "global.cancel"/>" onclick="swfu.cancelQueue();" disabled="disabled" /></td>
+	<td><input class="cancel" id="btnCancel" type="button" value="<@s.m "global.cancel"/>" onclick="swfu.cancelQueue();" disabled="disabled" /></td>
 	</@cms_perm>
 	<@cms_perm url="/resource/o_create_dir.do">
 	<td>
 &nbsp;	<@s.m "resource.addDir"/>: <input type="text" name="dirName" size="10" onkeypress="if(event.keyCode==13){$('#dirButton').click();return false;}"/>
-		<input id="dirButton" type="submit" value="<@s.m "resource.createDir"/>" onclick="this.form.method='post';this.form.action='o_create_dir.do';"/>
+		<input class="create-new" id="dirButton" type="submit" value="<@s.m "resource.createDir"/>" onclick="this.form.method='post';this.form.action='o_create_dir.do';"/>
 	</td>
 	</@cms_perm>
 </tr>
@@ -159,9 +163,9 @@ function hideImage(a) {
 		</@cms_perm>
 	</@p.column><#t/>
 </@p.table>
-<div>
+<div style="margin-top:15px;">
 	<@cms_perm url="/resource/o_delete.do">
-	<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
+	<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();" class="del-button"/>
 	</@cms_perm>
 </div>
 </form>

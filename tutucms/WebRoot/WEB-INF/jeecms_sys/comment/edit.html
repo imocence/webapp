@@ -11,14 +11,14 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>:  <@s.m "cmsComment.function"/> - <@s.m "global.edit"/></div>
 	<form class="ropt">
-		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do';"/>
+		<input type="submit" value="<@s.m "global.backToList"/>" onclick="this.form.action='v_list.do';" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <@p.form id="jvForm" action="o_update.do" labelWidth="12">
 <@p.td colspan="2" label="cmsComment.doc">${cmsComment.content.title}</@p.td><@p.tr/>
 <@p.td width="50" colspan="1" label="cmsComment.commentUser"><#if (cmsComment.commentUser.username)??>${cmsComment.commentUser.username}<#else><@s.m "cmsComment.anonymity"/></#if></@p.td>

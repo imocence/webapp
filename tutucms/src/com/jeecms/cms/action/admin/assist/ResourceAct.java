@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.manager.assist.CmsResourceMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
 import com.jeecms.common.file.FileWrap;
@@ -28,7 +29,7 @@ import com.jeecms.common.web.ResponseUtils;
 /**
  * JEECMS资源的Action
  * 
- * @author coco
+ * @author liufang
  * 
  */
 // TODO 验证path必须以TPL_BASE开头，不能有..后退关键字
@@ -36,6 +37,7 @@ import com.jeecms.common.web.ResponseUtils;
 public class ResourceAct {
 	private static final Logger log = LoggerFactory
 			.getLogger(ResourceAct.class);
+	private static final String INVALID_PARAM = "template.invalidParams";
 
 	@RequestMapping("/resource/v_left.do")
 	public String left(String path, HttpServletRequest request, ModelMap model) {
@@ -80,6 +82,10 @@ public class ResourceAct {
 		if (StringUtils.isBlank(root)) {
 			root = site.getResPath();
 		}
+		WebErrors errors = validateList(root, site.getResPath(), request);
+		if (errors.hasErrors()) {
+			return errors.showErrorPage(model);
+		}
 		String rel = root.substring(site.getResPath().length());
 		if (rel.length() == 0) {
 			rel = "/";
@@ -109,9 +115,10 @@ public class ResourceAct {
 	@RequestMapping("/resource/v_edit.do")
 	public String edit(HttpServletRequest request, ModelMap model)
 			throws IOException {
+		CmsSite site = CmsUtils.getSite(request);
 		String root = RequestUtils.getQueryParam(request, "root");
 		String name = RequestUtils.getQueryParam(request, "name");
-		WebErrors errors = validateEdit(root, request);
+		WebErrors errors = validateEdit(root, site.getResPath(), request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
@@ -133,6 +140,8 @@ public class ResourceAct {
 		resourceMng.createFile(root, filename, source);
 		model.addAttribute("root", root);
 		log.info("save Resource name={}", filename);
+		cmsLogMng.operating(request, "resource.log.save", "filename="
+				+ filename);
 		return "redirect:v_list.do";
 	}
 
@@ -141,13 +150,15 @@ public class ResourceAct {
 	public void update(String root, String name, String source,
 			HttpServletRequest request, HttpServletResponse response,
 			ModelMap model) throws IOException {
-		WebErrors errors = validateUpdate(root, name, source, request);
+		CmsSite site = CmsUtils.getSite(request);
+		WebErrors errors = validateUpdate(root, name,site.getResPath(), source, request);
 		if (errors.hasErrors()) {
 			ResponseUtils.renderJson(response, "{success:false,msg:'"
 					+ errors.getErrors().get(0) + "'}");
 		}
 		resourceMng.updateFile(name, source);
 		log.info("update Resource name={}.", name);
+		cmsLogMng.operating(request, "resource.log.update", "filename=" + name);
 		model.addAttribute("root", root);
 		ResponseUtils.renderJson(response, "{success:true}");
 	}
@@ -155,7 +166,8 @@ public class ResourceAct {
 	@RequestMapping("/resource/o_delete.do")
 	public String delete(String root, String[] names,
 			HttpServletRequest request, ModelMap model) {
-		WebErrors errors = validateDelete(root, names, request);
+		CmsSite site = CmsUtils.getSite(request);
+		WebErrors errors = validateDelete(root, names,site.getResPath(), request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
@@ -163,6 +175,8 @@ public class ResourceAct {
 		log.info("delete Resource count: {}", count);
 		for (String name : names) {
 			log.info("delete Resource name={}", name);
+			cmsLogMng.operating(request, "resource.log.delete", "filename="
+					+ name);
 		}
 		model.addAttribute("root", root);
 		return list(request, model);
@@ -175,6 +189,7 @@ public class ResourceAct {
 		String name = RequestUtils.getQueryParam(request, "name");
 		int count = resourceMng.delete(new String[] { name });
 		log.info("delete Resource {}, count {}", name, count);
+		cmsLogMng.operating(request, "resource.log.delete", "filename=" + name);
 		model.addAttribute("root", root);
 		return list(request, model);
 	}
@@ -237,35 +252,57 @@ public class ResourceAct {
 		return errors;
 	}
 
+	private WebErrors validateList(String name, String resPath,
+			HttpServletRequest request) {
+		WebErrors errors = WebErrors.create(request);
+		if (vldExist(name, errors)) {
+			return errors;
+		}
+		if(isUnValidName(name, name, resPath, errors)){
+			errors.addErrorCode(INVALID_PARAM);
+		}
+		return errors;
+	}
+	
 	private WebErrors validateSave(String name, String source,
 			HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		return errors;
 	}
 
-	private WebErrors validateEdit(String id, HttpServletRequest request) {
+	private WebErrors validateEdit(String id, String resPath,HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		if (vldExist(id, errors)) {
 			return errors;
 		}
+		if(isUnValidName(id, id, resPath, errors)){
+			errors.addErrorCode(INVALID_PARAM);
+		}
 		return errors;
 	}
 
-	private WebErrors validateUpdate(String root, String name, String source,
+	private WebErrors validateUpdate(String root, String name,String  resPath,String source,
 			HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		if (vldExist(name, errors)) {
 			return errors;
 		}
+		if(isUnValidName(root, name, resPath, errors)){
+			errors.addErrorCode(INVALID_PARAM);
+		}
 		return errors;
 	}
 
-	private WebErrors validateDelete(String root, String[] names,
+	private WebErrors validateDelete(String root, String[] names, String resPath,
 			HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		errors.ifEmpty(names, "names");
 		for (String id : names) {
 			vldExist(id, errors);
+			if(isUnValidName(id, id, resPath, errors)){
+				errors.addErrorCode(INVALID_PARAM);
+				return errors;
+			}
 		}
 		return errors;
 	}
@@ -280,7 +317,17 @@ public class ResourceAct {
 		// }
 		return false;
 	}
+	
+	private boolean isUnValidName(String path,String name,String resPath, WebErrors errors) {
+		if (!path.startsWith(resPath)||path.contains("../")||path.contains("..\\")||name.contains("..\\")||name.contains("../")) {
+			return true;
+		}else{
+			return false;
+		}
+	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	private CmsResourceMng resourceMng;
 
 	@Autowired

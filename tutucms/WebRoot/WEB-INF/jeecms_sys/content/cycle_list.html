@@ -32,20 +32,20 @@ function optDelete() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "contentCycle.function"/> - <@s.m "global.list"/></div>
 	<form class="ropt">
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <form action="v_list.do" method="post" style="padding-top:5px;">
 <div>
 <@s.m "content.title"/>: <input type="text" name="queryTitle" value="${queryTitle!}" style="width:100px"/>
 <@s.m "content.user"/>: <input type="text" name="queryInputUsername" value="${queryInputUsername!}" style="width:70px"/>
 <@p.select name="queryOrderBy" value=queryOrderBy list={"0":"content.orderBy.0","1":"content.orderBy.1","2":"content.orderBy.2","3":"content.orderBy.3","4":"content.orderBy.4","5":"content.orderBy.5","6":"content.orderBy.6","7":"content.orderBy.7","8":"content.orderBy.8","9":"content.orderBy.9","10":"content.orderBy.10","11":"content.orderBy.11","12":"content.orderBy.12","13":"content.orderBy.13","14":"content.orderBy.14","15":"content.orderBy.15","16":"content.orderBy.16","17":"content.orderBy.17","18":"content.orderBy.18","19":"content.orderBy.19","20":"content.orderBy.20","21":"content.orderBy.21"}/>
 <input type="hidden" name="cid" value="${cid!}"/>
-<input type="submit" value="<@s.m "global.query"/>"/>
+<input class="query" type="submit" value="<@s.m "global.query"/>"/>
 </div>
 </form>
 <form id="tableForm" method="post">
@@ -133,9 +133,9 @@ function optDelete() {
 		<a href="o_delete.do?ids=${content.id}${params}" onclick="if(!confirm('<@s.m "global.confirm.delete"/>')) {return false;}" class="pn-opt"><@s.m "global.delete"/></a><#t/>
 	</@p.column><#t/>
 </@p.table>
-<div>
-	<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
-	<input type="button" value="<@s.m "contentCycle.recycle"/>" onclick="optRecycle();"/>
+<div style="margin-top:15px;">
+	<input class="del-button" type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
+	<input class="recycle" type="button" value="<@s.m "contentCycle.recycle"/>" onclick="optRecycle();"/>
 </div>
 </form>
 </div>

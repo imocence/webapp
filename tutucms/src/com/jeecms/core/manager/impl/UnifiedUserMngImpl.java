@@ -12,12 +12,14 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jeecms.common.email.EmailSendTool;
 import com.jeecms.common.email.EmailSender;
 import com.jeecms.common.email.MessageTemplate;
 import com.jeecms.common.page.Pagination;
@@ -26,6 +28,8 @@ import com.jeecms.common.security.UsernameNotFoundException;
 import com.jeecms.common.security.encoder.PwdEncoder;
 import com.jeecms.core.dao.UnifiedUserDao;
 import com.jeecms.core.entity.UnifiedUser;
+import com.jeecms.core.entity.Config.ConfigLogin;
+import com.jeecms.core.manager.ConfigMng;
 import com.jeecms.core.manager.UnifiedUserMng;
 
 @Service
@@ -55,10 +59,10 @@ public class UnifiedUserMngImpl implements UnifiedUserMng {
 					throws MessagingException, UnsupportedEncodingException {
 				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage,
 						false, email.getEncoding());
-				msg.setSubject(tpl.getSubject());
+				msg.setSubject(tpl.getForgotPasswordSubject());
 				msg.setTo(to);
 				msg.setFrom(email.getUsername(), email.getPersonal());
-				String text = tpl.getText();
+				String text = tpl.getForgotPasswordText();
 				text = StringUtils.replace(text, "${uid}", String.valueOf(uid));
 				text = StringUtils.replace(text, "${username}", username);
 				text = StringUtils.replace(text, "${resetKey}", resetKey);
@@ -66,6 +70,33 @@ public class UnifiedUserMngImpl implements UnifiedUserMng {
 				msg.setText(text);
 			}
 		});
+	}
+
+	private void senderEmail(final String username, final String to,
+			final String activationCode, final EmailSender email,
+			final MessageTemplate tpl) throws UnsupportedEncodingException, MessagingException {
+		/*
+		 * JavaMailSenderImpl sender = new JavaMailSenderImpl();
+		 * sender.setHost(email.getHost());
+		 * sender.setUsername(email.getUsername());
+		 * sender.setPassword(email.getPassword()); sender.send(new
+		 * MimeMessagePreparator() { public void prepare(MimeMessage
+		 * mimeMessage) throws MessagingException, UnsupportedEncodingException
+		 * { MimeMessageHelper msg; msg = new MimeMessageHelper(mimeMessage,
+		 * false, email.getEncoding());
+		 * msg.setSubject(tpl.getRegisterSubject()); msg.setTo(to);
+		 * msg.setFrom(email.getUsername(), email.getPersonal()); String text =
+		 * tpl.getRegisterText(); text = StringUtils.replace(text,
+		 * "${username}", username); text = StringUtils.replace(text,
+		 * "${activationCode}", activationCode); msg.setText(text); } });
+		 */
+		String text = tpl.getRegisterText();
+		text = StringUtils.replace(text, "${username}", username);
+		text = StringUtils.replace(text, "${activationCode}", activationCode);
+		EmailSendTool sendEmail = new EmailSendTool(email.getHost(), email
+				.getUsername(), email.getPassword(), to, tpl
+				.getRegisterSubject(), text, email.getPersonal(), "", "");
+		sendEmail.send();
 	}
 
 	public UnifiedUser resetPassword(Integer userId) {
@@ -76,6 +107,27 @@ public class UnifiedUserMngImpl implements UnifiedUserMng {
 		return user;
 	}
 
+	public Integer errorRemaining(String username) {
+		if (StringUtils.isBlank(username)) {
+			return null;
+		}
+		UnifiedUser user = getByUsername(username);
+		if (user == null) {
+			return null;
+		}
+		long now = System.currentTimeMillis();
+		ConfigLogin configLogin = configMng.getConfigLogin();
+		int maxErrorTimes = configLogin.getErrorTimes();
+		int maxErrorInterval = configLogin.getErrorInterval() * 60 * 1000;
+		Integer errorCount = user.getErrorCount();
+		Date errorTime = user.getErrorTime();
+		if (errorCount <= 0 || errorTime == null
+				|| errorTime.getTime() + maxErrorInterval < now) {
+			return maxErrorTimes;
+		}
+		return maxErrorTimes - errorCount;
+	}
+
 	public UnifiedUser login(String username, String password, String ip)
 			throws UsernameNotFoundException, BadCredentialsException {
 		UnifiedUser user = getByUsername(username);
@@ -84,19 +136,45 @@ public class UnifiedUserMngImpl implements UnifiedUserMng {
 					+ username);
 		}
 		if (!pwdEncoder.isPasswordValid(user.getPassword(), password)) {
+			updateLoginError(user.getId(), ip);
 			throw new BadCredentialsException("password invalid");
 		}
-		updateLoginInfo(user.getId(), ip);
+		if (!user.getActivation()) {
+			throw new BadCredentialsException("account not activated");
+		}
+		updateLoginSuccess(user.getId(), ip);
 		return user;
 	}
 
-	public void updateLoginInfo(Integer userId, String ip) {
-		Date now = new Timestamp(System.currentTimeMillis());
+	public void updateLoginSuccess(Integer userId, String ip) {
 		UnifiedUser user = findById(userId);
+		Date now = new Timestamp(System.currentTimeMillis());
 
 		user.setLoginCount(user.getLoginCount() + 1);
 		user.setLastLoginIp(ip);
 		user.setLastLoginTime(now);
+
+		user.setErrorCount(0);
+		user.setErrorTime(null);
+		user.setErrorIp(null);
+	}
+
+	public void updateLoginError(Integer userId, String ip) {
+		UnifiedUser user = findById(userId);
+		Date now = new Timestamp(System.currentTimeMillis());
+		ConfigLogin configLogin = configMng.getConfigLogin();
+		int errorInterval = configLogin.getErrorInterval();
+		Date errorTime = user.getErrorTime();
+
+		user.setErrorIp(ip);
+		if (errorTime == null
+				|| errorTime.getTime() + errorInterval * 60 * 1000 < now
+						.getTime()) {
+			user.setErrorTime(now);
+			user.setErrorCount(1);
+		} else {
+			user.setErrorCount(user.getErrorCount() + 1);
+		}
 	}
 
 	public boolean usernameExist(String username) {
@@ -128,7 +206,7 @@ public class UnifiedUserMngImpl implements UnifiedUserMng {
 	}
 
 	public UnifiedUser save(String username, String email, String password,
-			String ip) {
+			String ip)  {
 		Date now = new Timestamp(System.currentTimeMillis());
 		UnifiedUser user = new UnifiedUser();
 		user.setUsername(username);
@@ -138,8 +216,33 @@ public class UnifiedUserMngImpl implements UnifiedUserMng {
 		user.setRegisterTime(now);
 		user.setLastLoginIp(ip);
 		user.setLastLoginTime(now);
-		user.setLoginCount(0);
+		//不强制验证邮箱直接激活
+		user.setActivation(true);
+		user.init();
 		dao.save(user);
+		return user;
+	}
+
+	public UnifiedUser save(String username, String email, String password,
+			String ip, Boolean activation, EmailSender sender,
+			MessageTemplate msgTpl) throws UnsupportedEncodingException, MessagingException {
+		Date now = new Timestamp(System.currentTimeMillis());
+		UnifiedUser user = new UnifiedUser();
+		user.setUsername(username);
+		user.setEmail(email);
+		user.setPassword(pwdEncoder.encodePassword(password));
+		user.setRegisterIp(ip);
+		user.setRegisterTime(now);
+		user.setLastLoginIp(ip);
+		user.setLastLoginTime(now);
+		user.setActivation(activation);
+		user.init();
+		dao.save(user);
+		if (!activation) {
+			String uuid = StringUtils.remove(UUID.randomUUID().toString(), '-');
+			user.setActivationCode(uuid);
+			senderEmail(username, email, uuid, sender, msgTpl);
+		}
 		return user;
 	}
 
@@ -177,8 +280,26 @@ public class UnifiedUserMngImpl implements UnifiedUserMng {
 		return beans;
 	}
 
+	public UnifiedUser active(String username, String activationCode) {
+		UnifiedUser bean = getByUsername(username);
+		bean.setActivation(true);
+		bean.setActivationCode(null);
+		return bean;
+	}
+
+	public UnifiedUser activeLogin(UnifiedUser user, String ip) {
+		updateLoginSuccess(user.getId(), ip);
+		return user;
+	}
+
+	private ConfigMng configMng;
 	private PwdEncoder pwdEncoder;
 	private UnifiedUserDao dao;
+
+	@Autowired
+	public void setConfigMng(ConfigMng configMng) {
+		this.configMng = configMng;
+	}
 
 	@Autowired
 	public void setPwdEncoder(PwdEncoder pwdEncoder) {
@@ -189,4 +310,5 @@ public class UnifiedUserMngImpl implements UnifiedUserMng {
 	public void setDao(UnifiedUserDao dao) {
 		this.dao = dao;
 	}
+
 }

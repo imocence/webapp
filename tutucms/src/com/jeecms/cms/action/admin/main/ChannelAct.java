@@ -25,6 +25,7 @@ import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.entity.main.CmsUser;
 import com.jeecms.cms.manager.main.ChannelMng;
 import com.jeecms.cms.manager.main.CmsGroupMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsModelItemMng;
 import com.jeecms.cms.manager.main.CmsModelMng;
 import com.jeecms.cms.manager.main.CmsUserMng;
@@ -241,6 +242,8 @@ public class ChannelAct {
 		bean = manager.save(bean, ext, txt, viewGroupIds, contriGroupIds,
 				userIds, CmsUtils.getSiteId(request), root, modelId);
 		log.info("save Channel id={}, name={}", bean.getId(), bean.getName());
+		cmsLogMng.operating(request, "channel.log.save", "id=" + bean.getId()
+				+ ";title=" + bean.getTitle());
 		model.addAttribute("root", root);
 		return "redirect:v_list.do";
 	}
@@ -267,6 +270,8 @@ public class ChannelAct {
 		bean = manager.update(bean, ext, txt, viewGroupIds, contriGroupIds,
 				userIds, parentId, attr);
 		log.info("update Channel id={}.", bean.getId());
+		cmsLogMng.operating(request, "channel.log.update", "id=" + bean.getId()
+				+ ";name=" + bean.getName());
 		return list(root, request, model);
 	}
 
@@ -280,6 +285,8 @@ public class ChannelAct {
 		Channel[] beans = manager.deleteByIds(ids);
 		for (Channel bean : beans) {
 			log.info("delete Channel id={}", bean.getId());
+			cmsLogMng.operating(request, "channel.log.delete", "id="
+					+ bean.getId() + ";title=" + bean.getTitle());
 		}
 		return list(root, request, model);
 	}
@@ -411,6 +418,8 @@ public class ChannelAct {
 	private CmsGroupMng cmsGroupMng;
 	@Autowired
 	private TplManager tplManager;
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private ChannelMng manager;
 }

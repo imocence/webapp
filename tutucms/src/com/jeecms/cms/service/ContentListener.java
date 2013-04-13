@@ -7,7 +7,7 @@ import com.jeecms.cms.entity.main.Content;
 /**
  * 内容修改监听器
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface ContentListener {

@@ -36,7 +36,7 @@ import com.jeecms.common.page.Pagination;
  * <li>21：总顶降序
  * </ul>
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public interface ContentDao {
@@ -217,6 +217,8 @@ public interface ContentDao {
 			Integer[] siteIds, Integer[] channelIds, Integer[] typeIds,
 			Integer excludeId, Boolean titleImg, Boolean recommend,
 			String title, int orderBy, Integer first, Integer count);
+	
+	public Pagination getPageForCollection(Integer siteId, Integer memberId, int pageNo, int pageSize);
 
 	public int countByChannelId(int channelId);
 

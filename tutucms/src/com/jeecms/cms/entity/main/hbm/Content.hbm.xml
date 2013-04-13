@@ -33,6 +33,10 @@
 			<key column="content_id"/>
 			<many-to-many column="group_id" class="CmsGroup"/>
 		</set>
+		<set name="collectUsers" table="jc_user_collection">
+			<key column="content_id"/>
+			<many-to-many column="user_id" class="CmsUser"/>
+		</set>
 		<list name="tags" table="jc_contenttag">
 			<cache usage="read-write"/>
 			<key column="content_id"/>
@@ -75,5 +79,15 @@
 			<map-key column="attr_name" type="string" length="30"/>
 			<element column="attr_value" type="string" length="255"/>
 		</map>
+		<set name="comments" inverse="true" cascade="delete-orphan">
+			<cache usage="read-write"/>
+			<key column="content_id"/>
+			<one-to-many class="com.jeecms.cms.entity.assist.CmsComment"/>
+		</set>
+		<set name="files" inverse="true">
+			<cache usage="read-write"/>
+			<key column="content_id"/>
+			<one-to-many class="com.jeecms.cms.entity.assist.CmsFile"/>
+		</set>
 	</class>
 </hibernate-mapping>

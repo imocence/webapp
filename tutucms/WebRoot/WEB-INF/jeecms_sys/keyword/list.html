@@ -32,17 +32,17 @@ function optSaveContent() {
 </script>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "cmsKeyword.function"/> - <@s.m "global.list"/></div>
 	<form class="ropt">
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <form id="jvForm" action="o_save.do" method="post" style="padding:5px 0 0 5px">
 <@s.m "cmsKeyword.name"/>:<input type="text" name="name" class="required" maxlength="255" style="width:120px"/>
 <@s.m "cmsKeyword.url"/>:<input type="text" name="url" class="required" maxlength="255" style="width:500px"/>
-<input type="submit" value="<@s.m "global.add"/>"/>
+<input class="add" type="submit" value="<@s.m "global.add"/>"/>
 </form>
 <form id="tableForm" method="post">
 <input type="hidden" name="pageNo" value="${pageNo!}"/>
@@ -58,9 +58,9 @@ function optSaveContent() {
 		<a href="o_delete.do?ids=${cmsKeyword.id}" onclick="if(!confirm('<@s.m "global.confirm.delete"/>')) {return false;}" class="pn-opt"><@s.m "global.delete"/></a><#t/>
 	</@p.column><#t/>
 </@p.table>
-<div>
-	<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
-&nbsp; <input type="button" value="<@s.m "cmsKeyword.saveContent"/>" onclick="optSaveContent();"/>
+<div style="margin-top:15px;">
+	<input class="del-button" type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
+&nbsp; <input class="save-content" type="button" value="<@s.m "cmsKeyword.saveContent"/>" onclick="optSaveContent();"/>
 </div>
 </form>
 </div>

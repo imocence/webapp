@@ -22,7 +22,7 @@ import com.jeecms.common.web.springmvc.MessageResolver;
  * retrieval.
  * </p>
  * 
- * @version $Id: LocalizedMessages.java,v 1.1 2010/03/23 06:30:36 coco Exp $
+ * @version $Id: LocalizedMessages.java,v 1.1 2011/12/06 01:36:06 administrator Exp $
  */
 public class LocalizedMessages {
 	/**

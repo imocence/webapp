@@ -21,7 +21,7 @@ import com.jeecms.common.hibernate3.PriorityInterface;
 /**
  * 栏目实体类
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class Channel extends BaseChannel implements HibernateTree<Integer>,
@@ -31,7 +31,7 @@ public class Channel extends BaseChannel implements HibernateTree<Integer>,
 	/**
 	 * 审核后内容修改方式
 	 * 
-	 * @author coco
+	 * @author liufang
 	 * 
 	 */
 	public static enum AfterCheckEnum {
@@ -61,7 +61,7 @@ public class Channel extends BaseChannel implements HibernateTree<Integer>,
 		if (getStaticChannel()) {
 			return getUrlStatic(false, 1);
 		} else {
-			return getUrlDynamic(false);
+			return getUrlDynamic(null);
 		}
 	}
 

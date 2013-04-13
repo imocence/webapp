@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.jeecms.cms.entity.assist.CmsSensitivity;
 import com.jeecms.cms.manager.assist.CmsSensitivityMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.web.WebErrors;
 
 @Controller
@@ -37,6 +38,8 @@ public class CmsSensitivityAct {
 		bean = manager.save(bean);
 		model.addAttribute("message", "global.success");
 		log.info("save CmsSensitivity id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsSensitivity.log.save", "id="
+				+ bean.getId() + ";name=" + bean.getSearch());
 		return list(request, model);
 	}
 
@@ -50,6 +53,7 @@ public class CmsSensitivityAct {
 		manager.updateEnsitivity(id, search, replacement);
 		model.addAttribute("message", "global.success");
 		log.info("update CmsSensitivity.");
+		cmsLogMng.operating(request, "cmsSensitivity.log.save", null);
 		return list(request, model);
 	}
 
@@ -63,6 +67,8 @@ public class CmsSensitivityAct {
 		CmsSensitivity[] beans = manager.deleteByIds(ids);
 		for (CmsSensitivity bean : beans) {
 			log.info("delete CmsSensitivity id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsSensitivity.log.delete", "id="
+					+ bean.getId() + ";name=" + bean.getSearch());
 		}
 		model.addAttribute("message", "global.success");
 		return list(request, model);
@@ -120,6 +126,8 @@ public class CmsSensitivityAct {
 		return false;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsSensitivityMng manager;
 }

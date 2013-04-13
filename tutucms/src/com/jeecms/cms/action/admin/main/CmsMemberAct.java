@@ -19,6 +19,7 @@ import com.jeecms.cms.entity.main.CmsGroup;
 import com.jeecms.cms.entity.main.CmsUser;
 import com.jeecms.cms.entity.main.CmsUserExt;
 import com.jeecms.cms.manager.main.CmsGroupMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsUserMng;
 import com.jeecms.cms.web.WebErrors;
 import com.jeecms.common.page.Pagination;
@@ -87,6 +88,8 @@ public class CmsMemberAct {
 		bean = manager.registerMember(username, email, password, ip, groupId,
 				ext);
 		log.info("save CmsMember id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsMember.log.save", "id=" + bean.getId()
+				+ ";username=" + bean.getUsername());
 		return "redirect:v_list.do";
 	}
 
@@ -103,6 +106,8 @@ public class CmsMemberAct {
 		CmsUser bean = manager.updateMember(id, email, password, disabled, ext,
 				groupId);
 		log.info("update CmsMember id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsMember.log.update", "id="
+				+ bean.getId() + ";username=" + bean.getUsername());
 
 		return list(queryUsername, queryEmail, queryGroupId, queryDisabled,
 				pageNo, request, model);
@@ -122,6 +127,8 @@ public class CmsMemberAct {
 		CmsUser[] beans = manager.deleteByIds(ids);
 		for (CmsUser bean : beans) {
 			log.info("delete CmsMember id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsMember.log.delete", "id="
+					+ bean.getId() + ";username=" + bean.getUsername());
 		}
 		return list(queryUsername, queryEmail, queryGroupId, queryDisabled,
 				pageNo, request, model);
@@ -182,6 +189,8 @@ public class CmsMemberAct {
 
 	@Autowired
 	private CmsGroupMng cmsGroupMng;
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsUserMng manager;
 }

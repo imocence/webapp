@@ -25,7 +25,7 @@ import freemarker.template.TemplateModel;
 /**
  * 内容对象标签
  * 
- * @author coco
+ * @author liufang
  * 
  */
 public class ContentDirective implements TemplateDirectiveModel {

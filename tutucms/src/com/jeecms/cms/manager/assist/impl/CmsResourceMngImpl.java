@@ -26,7 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jeecms.cms.entity.assist.CmsFile;
 import com.jeecms.cms.entity.main.CmsSite;
+import com.jeecms.cms.manager.assist.CmsFileMng;
 import com.jeecms.cms.manager.assist.CmsResourceMng;
 import com.jeecms.cms.web.FrontUtils;
 import com.jeecms.common.file.FileWrap;
@@ -52,6 +54,66 @@ public class CmsResourceMngImpl implements CmsResourceMng {
 			List<FileWrap> list = new ArrayList<FileWrap>(files.length);
 			for (File f : files) {
 				list.add(new FileWrap(f, realPathResolver.get("")));
+			}
+			return list;
+		} else {
+			return new ArrayList<FileWrap>(0);
+		}
+	}
+	
+	public List<FileWrap> listFileValid(String path, boolean dirAndEditable) {
+		File parent = new File(realPathResolver.get(path));
+		if (parent.exists()) {
+			File[] files;
+			if (dirAndEditable) {
+				files = parent.listFiles(filter);
+			} else {
+				files = parent.listFiles();
+			}
+			Arrays.sort(files, new FileComparator());
+			List<FileWrap> list = new ArrayList<FileWrap>(files.length);
+			CmsFile file;
+			for (File f : files) {
+				file=fileMng.findByPath(f.getName());
+				if(file!=null){
+					list.add(new FileWrap(f, realPathResolver.get(""),null,file.getFileIsvalid()));
+				}else{
+					list.add(new FileWrap(f, realPathResolver.get(""),null,false));
+				}
+			}
+			return list;
+		} else {
+			return new ArrayList<FileWrap>(0);
+		}
+	}
+	
+	public List<FileWrap> queryFiles(String path, Boolean valid){
+		File parent = new File(realPathResolver.get(path));
+		if (parent.exists()) {
+			File[] files;
+			files = parent.listFiles();
+			Arrays.sort(files, new FileComparator());
+			List<FileWrap> list = new ArrayList<FileWrap>(files.length);
+			CmsFile file;
+			for (File f : files) {
+				file=fileMng.findByPath(f.getName());
+				if(valid!=null){
+					if(file!=null){
+						if(file.getFileIsvalid().equals(valid)){
+							list.add(new FileWrap(f, realPathResolver.get(""),null,valid));
+						}
+					}else{
+						if(valid.equals(false)){
+							list.add(new FileWrap(f, realPathResolver.get(""),null,false));
+						}
+					}
+				}else{
+					if(file!=null){
+						list.add(new FileWrap(f, realPathResolver.get(""),null,file.getFileIsvalid()));
+					}else{
+						list.add(new FileWrap(f, realPathResolver.get(""),null,false));
+					}
+				}
 			}
 			return list;
 		} else {
@@ -230,9 +292,16 @@ public class CmsResourceMngImpl implements CmsResourceMng {
 	};
 
 	private RealPathResolver realPathResolver;
+	private CmsFileMng fileMng;
 
 	@Autowired
 	public void setRealPathResolver(RealPathResolver realPathResolver) {
 		this.realPathResolver = realPathResolver;
 	}
+
+	@Autowired
+	public void setFileMng(CmsFileMng fileMng) {
+		this.fileMng = fileMng;
+	}
+	
 }

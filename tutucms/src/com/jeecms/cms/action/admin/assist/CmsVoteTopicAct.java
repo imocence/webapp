@@ -19,6 +19,7 @@ import com.jeecms.cms.entity.assist.CmsVoteItem;
 import com.jeecms.cms.entity.assist.CmsVoteTopic;
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.manager.assist.CmsVoteTopicMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
 import com.jeecms.common.page.Pagination;
@@ -69,6 +70,8 @@ public class CmsVoteTopicAct {
 				itemPriority);
 		bean = manager.save(bean, items);
 		log.info("save CmsVoteTopic id={}", bean.getId());
+		cmsLogMng.operating(request, "cmsVoteTopic.log.save", "id="
+				+ bean.getId() + ";title=" + bean.getTitle());
 		return "redirect:v_list.do";
 	}
 
@@ -85,6 +88,8 @@ public class CmsVoteTopicAct {
 				itemPriority);
 		bean = manager.update(bean, items);
 		log.info("update CmsVoteTopic id={}.", bean.getId());
+		cmsLogMng.operating(request, "cmsVoteTopic.log.update", "id="
+				+ bean.getId() + ";title=" + bean.getTitle());
 		return list(pageNo, request, model);
 	}
 
@@ -98,6 +103,8 @@ public class CmsVoteTopicAct {
 		CmsVoteTopic[] beans = manager.deleteByIds(ids);
 		for (CmsVoteTopic bean : beans) {
 			log.info("delete CmsVoteTopic id={}", bean.getId());
+			cmsLogMng.operating(request, "cmsVoteTopic.log.delete", "id="
+					+ bean.getId() + ";title=" + bean.getTitle());
 		}
 		return list(pageNo, request, model);
 	}
@@ -173,6 +180,8 @@ public class CmsVoteTopicAct {
 		return false;
 	}
 
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	@Autowired
 	private CmsVoteTopicMng manager;
 }

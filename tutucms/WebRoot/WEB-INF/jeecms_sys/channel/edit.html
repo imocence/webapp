@@ -18,8 +18,7 @@ $(function() {
 </head>
 <body>
 <#include "/common/image_upload.html"/>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>:  <@s.m "channel.function"/> - <@s.m "global.edit"/></div>
 	<form class="ropt">
 		<input type="hidden" id="root" name="root" value="${channel.id}"/>
@@ -29,10 +28,12 @@ $(function() {
 			<option value="${model.id}">${model.name}</option>
 			</#list>
 		</select>
-&nbsp;	<input type="submit" value="<@s.m "global.backToList"/>" onclick="$('#root').val('${(channel.parent.id)!}');this.form.action='v_list.do';"/>
+&nbsp;	<input type="submit" value="<@s.m "global.backToList"/>" onclick="$('#root').val('${(channel.parent.id)!}');this.form.action='v_list.do';" class="return-button"/>
 	</form>
 	<div class="clear"></div>
 </div>
+
+<div class="body-box">
 <@p.form id="jvForm" action="o_update.do" labelWidth="10">
 <@p.td colspan="1" width="50" label="channel.parent">
 	<@p.select name="parentId" list=channelList value=(channel.parent.id)! listKey="id" listValue="name" listDeep="deep" headerKey="" headerValue="channel.top"/>
@@ -135,18 +136,28 @@ $(function() {
 
 <#elseif item.field=="titleImg">
 <@p.td label=item.label colspan="1" width="50" noHeight="true">
-<@p.text id="uploadImgPath1" name="titleImg" value=channel.titleImg style="width:220px"/> <input type="button" value="<@s.m "imageupload.preview"/>" onclick="previewImg(1);"/><br/>
-<span id="ufc1"><input type="file" id="uploadFile1" size="14" style="width:180px"/></span> <label><input type="checkbox" onclick="$('#mark1').val(this.checked);"/><@s.m "imageupload.mark"/></label><input type="hidden" id="mark1" value="false"/> <input type="button" value="<@s.m "imageupload.upload"/>" onclick="upload(1);"/><br/>
-<@s.m "global.width"/>: <input type="text" id="zoomWidth1" value="${model.titleImgWidth}" size="5"/> <@s.m "global.height"/>: <input type="text" id="zoomHeight1" value="${model.titleImgHeight}" size="5"/> <input type="button" value="<@s.m "imageupload.cut"/>" onclick="imgCut(1);"/> 
+<@p.text id="uploadImgPath1" name="titleImg" value=channel.titleImg style="width:220px"/> <input type="button" value="<@s.m "imageupload.preview"/>" onclick="previewImg(1);" class="preview-button"/><br/>
+<span id="ufc1" style="position:relative">
+<input type='text' id='uploadFileText1' size="14"/>  
+<input class="browse" type='button' value='<@s.m "global.browse"/>'/>
+<input onchange="$('#uploadFileText1').val(this.value)" size="14" type="file" id="uploadFile1" class="file-button"/>
+</span>
+<label><input type="checkbox" onclick="$('#mark1').val(this.checked);"/><@s.m "imageupload.mark"/></label><input type="hidden" id="mark1" value="false"/> <input type="button" value="<@s.m "imageupload.upload"/>" onclick="upload(1);" class="upload-button"/><br/>
+<@s.m "global.width"/>: <input type="text" id="zoomWidth1" value="${model.titleImgWidth}" size="5"/> <@s.m "global.height"/>: <input type="text" id="zoomHeight1" value="${model.titleImgHeight}" size="5"/> <input type="button" value="<@s.m "imageupload.cut"/>" onclick="imgCut(1);" class="cut-button"/> 
 </@p.td><@p.td colspan="1" width="50">
 <img id="preImg1" alt="<@s.m "imageupload.preview"/>" style="width:100px;height:70px;background-color:#CCCCCC;border:1px solid #333"/>
 </@p.td><@p.tr/>
 
 <#elseif item.field=="contentImg">
 <@p.td label=item.label colspan="1" width="50" noHeight="true">
-<@p.text id="uploadImgPath2" name="contentImg" value=channel.contentImg style="width:220px"/> <input type="button" value="<@s.m "imageupload.preview"/>" onclick="previewImg(2);"/><br/>
-<span id="ufc2"><input type="file" id="uploadFile2" size="14" style="width:180px"/></span> <label><input type="checkbox" onclick="$('#mark2').val(this.checked);"/><@s.m "imageupload.mark"/></label><input type="hidden" id="mark2" value="false"/> <input type="button" value="<@s.m "imageupload.upload"/>" onclick="upload(2);"/><br/>
-<@s.m "global.width"/>: <input type="text" id="zoomWidth2" value="${model.contentImgWidth}" size="5"/> <@s.m "global.height"/>: <input type="text" id="zoomHeight2" value="${model.contentImgHeight}" size="5"/> <input type="button" value="<@s.m "imageupload.cut"/>" onclick="imgCut(2);"/> 
+<@p.text id="uploadImgPath2" name="contentImg" value=channel.contentImg style="width:220px"/> <input type="button" value="<@s.m "imageupload.preview"/>" onclick="previewImg(2);" class="preview-button"/><br/>
+<span id="ufc2" style="position:relative">
+<input type='text' id='uploadFileText2' size="14"/>  
+<input class="browse" type='button' value='<@s.m "global.browse"/>'/>
+<input onchange="$('#uploadFileText2').val(this.value)" size="14" type="file" id="uploadFile2" class="file-button"/>
+</span>
+<label><input type="checkbox" onclick="$('#mark2').val(this.checked);"/><@s.m "imageupload.mark"/></label><input type="hidden" id="mark2" value="false"/> <input type="button" value="<@s.m "imageupload.upload"/>" onclick="upload(2);" class="upload-button"/><br/>
+<@s.m "global.width"/>: <input type="text" id="zoomWidth2" value="${model.contentImgWidth}" size="5"/> <@s.m "global.height"/>: <input type="text" id="zoomHeight2" value="${model.contentImgHeight}" size="5"/> <input type="button" value="<@s.m "imageupload.cut"/>" onclick="imgCut(2);" class="cut-button"/> 
 </@p.td><@p.td colspan="1" width="50">
 <img id="preImg2" alt="<@s.m "imageupload.preview"/>" style="width:100px;height:70px;background-color:#CCCCCC;border:1px solid #333"/>
 </@p.td><@p.tr/>

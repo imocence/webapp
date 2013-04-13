@@ -22,6 +22,9 @@ ${name}.Config["LinkBrowser"] = false ;
 ${name}.Config["ImageBrowser"] = false ;
 ${name}.Config["FlashBrowser"] = false ;
 ${name}.Config["MediaBrowser"] = false ;
+<#if fullPage=="true">
+${name}.Config["FullPage"]=true;
+</#if>
 
 ${name}.Config["LinkBrowserURL"] = "${filemanager}?Connector=${base+appBase}/fck/connector.do" ;
 ${name}.Config["ImageBrowserURL"] = "${filemanager}?Type=Image&Connector=${base+appBase}/fck/connector.do" ;

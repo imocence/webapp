@@ -7,7 +7,7 @@ import com.jeecms.common.hibernate3.Updater;
 import com.jeecms.common.page.Pagination;
 
 public interface CmsGuestbookDao {
-	public Pagination getPage(Integer siteId, Integer ctgId, Boolean recommend,
+	public Pagination getPage(Integer siteId, Integer ctgId,Integer userId, Boolean recommend,
 			Boolean checked, boolean desc, boolean cacheable, int pageNo,
 			int pageSize);
 

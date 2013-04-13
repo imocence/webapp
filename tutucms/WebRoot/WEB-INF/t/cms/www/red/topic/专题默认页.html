@@ -64,12 +64,12 @@ ul.zxk li{width:320px; float:left; height:25px; line-height:25px;}
 				</td>
                 <td width="5">&nbsp;</td>
                 <td valign="top">
-				[@cms_content_list topicId=topic.id count='6' orderBy='4' titLen='18' descLen='70' append='...' channelOption='1']
-				<ul class="list">
+				[@cms_content_list topicId=topic.id count='6' orderBy='4' titLen='15' descLen='66' append='...' channelOption='1']
+				  <ul class="list">
 				[#list tag_list as a]
 				[#if a_index = 0]
 				  <li class="toptext">
-				  <a href="${a.url}" title="${a.title}" target="_blank"><h3>${a.stit}</h3></a>		
+				  <a href="${a.url}" title="${a.title}" target="_blank"><h3>[@text_cut s=a.title len=titLen append=append/]</h3></a>		
 				  <p>[@text_cut s=a.desc len=descLen append=append/]</p>
 				  </li>
 				[#else]	 
@@ -109,7 +109,7 @@ ul.zxk li{width:320px; float:left; height:25px; line-height:25px;}
             <td width="640" background="/${res}/img/topic/lmbj.gif"><h2>专题资讯库</h2></td>
           </tr>
           <tr>
-            <td height="400" colspan="2" align="center" valign="top" bgcolor="#FFFFFF">			
+            <td height="400" colspan="2" valign="top" bgcolor="#FFFFFF">			
 		      [@cms_content_page topicId=topic.id count='40' titLen='15' append='...' orderBy='2' dateFormat='MM-dd' channelOption='1']
 				<ul class="zxk box">
 		        [#list tag_pagination.list as a]

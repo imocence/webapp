@@ -31,14 +31,14 @@ function optPriority() {
 </style>
 </head>
 <body>
-<div class="body-box">
-<div class="rhead">
+<div class="box-positon">
 	<div class="rpos"><@s.m "global.position"/>: <@s.m "cmsModel.function"/> - <@s.m "global.list"/></div>
 	<form class="ropt">
-		<input type="submit" value="<@s.m "global.add"/>" onclick="this.form.action='v_add.do';"/>
+		<input class="add" type="submit" value="<@s.m "global.add"/>" onclick="this.form.action='v_add.do';"/>
 	</form>
 	<div class="clear"></div>
 </div>
+<div class="body-box">
 <form id="tableForm" method="post">
 <@p.table value=list;cmsModel,i,has_next><#rt/>
 	<@p.column title="<input type='checkbox' onclick='Pn.checkbox(\"ids\",this.checked)'/>" width="20">
@@ -67,8 +67,8 @@ function optPriority() {
 	</@p.column><#t/>
 </@p.table>
 <div>
-	<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();"/>
-&nbsp; <input type="button" value="<@s.m "global.saveOrder"/>" onclick="optPriority();"/>
+	<input type="button" value="<@s.m "global.delete"/>" onclick="optDelete();" class="del-button"/>
+&nbsp; <input type="button" value="<@s.m "global.saveOrder"/>" onclick="optPriority();" class="save-order"/>
 </div>
 </form>
 </div>

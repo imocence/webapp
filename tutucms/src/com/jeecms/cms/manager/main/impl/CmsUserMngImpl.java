@@ -1,9 +1,12 @@
 package com.jeecms.cms.manager.main.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import javax.mail.MessagingException;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jeecms.cms.dao.main.CmsUserDao;
+
 import com.jeecms.cms.entity.main.Channel;
 import com.jeecms.cms.entity.main.CmsGroup;
 import com.jeecms.cms.entity.main.CmsSite;
@@ -23,6 +27,9 @@ import com.jeecms.cms.manager.main.CmsSiteMng;
 import com.jeecms.cms.manager.main.CmsUserExtMng;
 import com.jeecms.cms.manager.main.CmsUserMng;
 import com.jeecms.cms.manager.main.CmsUserSiteMng;
+import com.jeecms.cms.manager.main.ContentMng;
+import com.jeecms.common.email.EmailSender;
+import com.jeecms.common.email.MessageTemplate;
 import com.jeecms.common.hibernate3.Updater;
 import com.jeecms.common.page.Pagination;
 import com.jeecms.core.entity.UnifiedUser;
@@ -38,6 +45,14 @@ public class CmsUserMngImpl implements CmsUserMng {
 		Pagination page = dao.getPage(username, email, siteId, groupId,
 				disabled, admin, rank, pageNo, pageSize);
 		return page;
+	}
+	
+	@Transactional(readOnly = true)
+	public List getList(String username, String email, Integer siteId,
+			Integer groupId, Boolean disabled, Boolean admin, Integer rank) {
+		List list = dao.getList(username, email, siteId, groupId,
+				disabled, admin, rank);
+		return list;
 	}
 
 	@Transactional(readOnly = true)
@@ -59,9 +74,35 @@ public class CmsUserMngImpl implements CmsUserMng {
 	}
 
 	public CmsUser registerMember(String username, String email,
-			String password, String ip, Integer groupId, CmsUserExt userExt) {
+			String password, String ip, Integer groupId, CmsUserExt userExt){
 		UnifiedUser unifiedUser = unifiedUserMng.save(username, email,
 				password, ip);
+		CmsUser user = new CmsUser();
+		user.forMember(unifiedUser);
+
+		CmsGroup group = null;
+		if (groupId != null) {
+			group = cmsGroupMng.findById(groupId);
+		} else {
+			group = cmsGroupMng.getRegDef();
+		}
+		if (group == null) {
+			throw new RuntimeException(
+					"register default member group not found!");
+		}
+		user.setGroup(group);
+		user.init();
+		dao.save(user);
+		cmsUserExtMng.save(userExt, user);
+		return user;
+	}
+
+	
+	public CmsUser registerMember(String username, String email,
+			String password, String ip, Integer groupId, CmsUserExt userExt,
+			Boolean activation, EmailSender sender, MessageTemplate msgTpl)throws UnsupportedEncodingException, MessagingException{
+		UnifiedUser unifiedUser = unifiedUserMng.save(username, email,
+				password, ip, activation, sender, msgTpl);
 		CmsUser user = new CmsUser();
 		user.forMember(unifiedUser);
 
@@ -169,7 +210,26 @@ public class CmsUserMngImpl implements CmsUserMng {
 
 	public CmsUser updateAdmin(CmsUser bean, CmsUserExt ext, String password,
 			Integer groupId, Integer[] roleIds, Integer[] channelIds,
+			Integer siteId, Byte step, Boolean allChannel) {
+		CmsUser user = updateAdmin(bean, ext, password, groupId, roleIds,
+				channelIds);
+		// 更新所属站点
+		cmsUserSiteMng.updateByUser(user, siteId, step, allChannel);
+		return user;
+	}
+
+	public CmsUser updateAdmin(CmsUser bean, CmsUserExt ext, String password,
+			Integer groupId, Integer[] roleIds, Integer[] channelIds,
 			Integer[] siteIds, Byte[] steps, Boolean[] allChannels) {
+		CmsUser user = updateAdmin(bean, ext, password, groupId, roleIds,
+				channelIds);
+		// 更新所属站点
+		cmsUserSiteMng.updateByUser(user, siteIds, steps, allChannels);
+		return user;
+	}
+
+	private CmsUser updateAdmin(CmsUser bean, CmsUserExt ext, String password,
+			Integer groupId, Integer[] roleIds, Integer[] channelIds) {
 		Updater<CmsUser> updater = new Updater<CmsUser>(bean);
 		updater.include("email");
 		CmsUser user = dao.updateByUpdater(updater);
@@ -197,8 +257,6 @@ public class CmsUserMngImpl implements CmsUserMng {
 				channel.addToUsers(user);
 			}
 		}
-		// 更新所属站点
-		cmsUserSiteMng.updateByUser(user, siteIds, steps, allChannels);
 		unifiedUserMng.update(bean.getId(), password, bean.getEmail());
 		return user;
 	}
@@ -219,10 +277,24 @@ public class CmsUserMngImpl implements CmsUserMng {
 		unifiedUserMng.update(id, password, email);
 		return entity;
 	}
+	
+	public CmsUser updateUserConllection(CmsUser user,Integer cid,Integer operate){
+		Updater<CmsUser> updater = new Updater<CmsUser>(user);
+		user = dao.updateByUpdater(updater);
+		if (operate.equals(1)) {
+			user.addToCollection(contentMng.findById(cid));
+		}// 取消收藏
+		else if (operate.equals(0)) {
+			user.delFromCollection(contentMng.findById(cid));
+		}
+		return user;
+	}
 
 	public CmsUser deleteById(Integer id) {
 		unifiedUserMng.deleteById(id);
 		CmsUser bean = dao.deleteById(id);
+		//删除收藏信息
+		bean.clearCollection();
 		return bean;
 	}
 
@@ -237,6 +309,10 @@ public class CmsUserMngImpl implements CmsUserMng {
 	public boolean usernameNotExist(String username) {
 		return dao.countByUsername(username) <= 0;
 	}
+	
+	public boolean usernameNotExistInMember(String username){
+		return dao.countMemberByUsername(username)<= 0;
+	}
 
 	public boolean emailNotExist(String email) {
 		return dao.countByEmail(email) <= 0;
@@ -250,6 +326,8 @@ public class CmsUserMngImpl implements CmsUserMng {
 	private UnifiedUserMng unifiedUserMng;
 	private CmsUserExtMng cmsUserExtMng;
 	private CmsUserDao dao;
+	@Autowired
+	private ContentMng contentMng;
 
 	@Autowired
 	public void setCmsUserSiteMng(CmsUserSiteMng cmsUserSiteMng) {

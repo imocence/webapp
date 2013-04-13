@@ -6,8 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,7 +21,6 @@ import com.jeecms.cms.web.FrontUtils;
 
 @Controller
 public class TagAct {
-	private static final Logger log = LoggerFactory.getLogger(TagAct.class);
 
 	public static final String TAGS_INDEX = "tpl.tagIndex";
 	public static final String TAGS_DETAIL = "tpl.tagDetail";

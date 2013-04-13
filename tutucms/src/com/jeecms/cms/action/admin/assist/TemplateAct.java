@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jeecms.cms.Constants;
 import com.jeecms.cms.entity.main.CmsSite;
 import com.jeecms.cms.manager.assist.CmsResourceMng;
+import com.jeecms.cms.manager.main.CmsLogMng;
 import com.jeecms.cms.manager.main.CmsSiteMng;
 import com.jeecms.cms.web.CmsUtils;
 import com.jeecms.cms.web.WebErrors;
@@ -35,12 +36,16 @@ import com.jeecms.core.tpl.TplManager;
 /**
  * JEECMS模板的Action
  * 
- * @author coco
+ * @author liufang
  * 
  */
 // TODO 验证path必须以TPL_BASE开头，不能有..后退关键字
 @Controller
 public class TemplateAct {
+	public static final String TEXT_AREA = "textarea";
+	public static final String EDITOR = "editor";
+	private static final String INVALID_PARAM = "template.invalidParams";
+
 	private static final Logger log = LoggerFactory
 			.getLogger(TemplateAct.class);
 
@@ -87,6 +92,10 @@ public class TemplateAct {
 		if (StringUtils.isBlank(root)) {
 			root = site.getTplPath();
 		}
+		WebErrors errors = validateList(root, site.getTplPath(), request);
+		if (errors.hasErrors()) {
+			return errors.showErrorPage(model);
+		}
 		String rel = root.substring(site.getTplPath().length());
 		if (rel.length() == 0) {
 			rel = "/";
@@ -108,22 +117,31 @@ public class TemplateAct {
 
 	@RequestMapping(value = "/template/v_add.do", method = RequestMethod.GET)
 	public String add(HttpServletRequest request, ModelMap model) {
+		CmsSite site = CmsUtils.getSite(request);
 		String root = RequestUtils.getQueryParam(request, "root");
+		WebErrors errors = validateAdd(root, site.getTplPath(), request);
+		if (errors.hasErrors()) {
+			return errors.showErrorPage(model);
+		}
+		String style = handerStyle(RequestUtils.getQueryParam(request, "style"));
 		model.addAttribute("root", root);
-		return "template/add";
+		return "template/add_" + style;
 	}
 
 	@RequestMapping("/template/v_edit.do")
 	public String edit(HttpServletRequest request, ModelMap model) {
+		CmsSite site = CmsUtils.getSite(request);
 		String root = RequestUtils.getQueryParam(request, "root");
 		String name = RequestUtils.getQueryParam(request, "name");
-		WebErrors errors = validateEdit(root, request);
+		String style = handerStyle(RequestUtils.getQueryParam(request, "style"));
+		WebErrors errors = validateEdit(root, name,site.getTplPath(), request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
 		model.addAttribute("template", tplManager.get(name));
 		model.addAttribute("root", root);
-		return "template/edit";
+		model.addAttribute("name", name);
+		return "template/edit_" + style;
 	}
 
 	@RequestMapping("/template/o_save.do")
@@ -137,29 +155,56 @@ public class TemplateAct {
 		tplManager.save(name, source, false);
 		model.addAttribute("root", root);
 		log.info("save Template name={}", filename);
+		cmsLogMng.operating(request, "template.log.save", "filename="
+				+ filename);
 		return "redirect:v_list.do";
 	}
 
 	// AJAX请求，不返回页面
-	@RequestMapping("/template/o_update.do")
-	public void update(String root, String name, String source,
+	@RequestMapping("/template/o_ajaxUpdate.do")
+	public void ajaxUpdate(String root, String name, String source,
 			HttpServletRequest request, HttpServletResponse response,
 			ModelMap model) {
-		WebErrors errors = validateUpdate(root, name, source, request);
+		CmsSite site = CmsUtils.getSite(request);
+		WebErrors errors = validateUpdate(root, name, site.getTplPath(),source, request);
 		if (errors.hasErrors()) {
 			ResponseUtils.renderJson(response, "{success:false,msg:'"
 					+ errors.getErrors().get(0) + "'}");
 		}
 		tplManager.update(name, source);
 		log.info("update Template name={}.", name);
+		cmsLogMng.operating(request, "template.log.update", "filename=" + name);
 		model.addAttribute("root", root);
 		ResponseUtils.renderJson(response, "{success:true}");
+	}
+
+	@RequestMapping("/template/o_update.do")
+	public String update(String root, String name, String source,
+			HttpServletRequest request, HttpServletResponse response,
+			ModelMap model) {
+		CmsSite site = CmsUtils.getSite(request);
+		WebErrors errors = validateUpdate(root, name,site.getTplPath(), source, request);
+		if (errors.hasErrors()) {
+			return errors.showErrorPage(model);
+		}
+		// 此处需要将标签内被替换的特殊符号还原
+		source = source.replaceAll("&quot;", "\"");
+		source = source.replaceAll("&amp;", "&");
+		source = source.replaceAll("&lt;", "<");
+		source = source.replaceAll("&gt;", ">");
+		tplManager.update(name, source);
+		log.info("update Template name={}.", name);
+		cmsLogMng.operating(request, "template.log.update", "filename=" + name);
+		model.addAttribute("template", tplManager.get(name));
+		model.addAttribute("root", root);
+		return "template/edit_" + EDITOR;
 	}
 
 	@RequestMapping("/template/o_delete.do")
 	public String delete(String root, String[] names,
 			HttpServletRequest request, ModelMap model) {
-		WebErrors errors = validateDelete(root, names, request);
+		CmsSite site = CmsUtils.getSite(request);
+		WebErrors errors = validateDelete(names, site.getTplPath(), request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model);
 		}
@@ -167,6 +212,8 @@ public class TemplateAct {
 		log.info("delete Template count: {}", count);
 		for (String name : names) {
 			log.info("delete Template name={}", name);
+			cmsLogMng.operating(request, "template.log.delete", "filename="
+					+ name);
 		}
 		model.addAttribute("root", root);
 		return list(request, model);
@@ -177,8 +224,15 @@ public class TemplateAct {
 		// TODO 输入验证
 		String root = RequestUtils.getQueryParam(request, "root");
 		String name = RequestUtils.getQueryParam(request, "name");
+		CmsSite site = CmsUtils.getSite(request);
+		WebErrors errors = validateDelete(new String[] { name }, site
+				.getTplPath(), request);
+		if (errors.hasErrors()) {
+			return errors.showErrorPage(model);
+		}
 		int count = tplManager.delete(new String[] { name });
 		log.info("delete Template {}, count {}", name, count);
+		cmsLogMng.operating(request, "template.log.delete", "filename=" + name);
 		model.addAttribute("root", root);
 		return list(request, model);
 	}
@@ -275,35 +329,75 @@ public class TemplateAct {
 		return errors;
 	}
 
+	private WebErrors validateList(String name, String tplPath,
+			HttpServletRequest request) {
+		WebErrors errors = WebErrors.create(request);
+		if (vldExist(name, errors)) {
+			return errors;
+		}
+		if(isUnValidName(name, name, tplPath, errors)){
+			errors.addErrorCode(INVALID_PARAM);
+		}
+		return errors;
+	}
+
+	private WebErrors validateAdd(String name, String tplPath,
+			HttpServletRequest request) {
+		WebErrors errors = WebErrors.create(request);
+		if (vldExist(name, errors)) {
+			return errors;
+		}
+		if(isUnValidName(name, name, tplPath, errors)){
+			errors.addErrorCode(INVALID_PARAM);
+		}
+		return errors;
+	}
+
 	private WebErrors validateSave(String name, String source,
 			HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		return errors;
 	}
 
-	private WebErrors validateEdit(String id, HttpServletRequest request) {
-		WebErrors errors = WebErrors.create(request);
-		if (vldExist(id, errors)) {
-			return errors;
-		}
-		return errors;
-	}
-
-	private WebErrors validateUpdate(String root, String name, String source,
+	private WebErrors validateEdit(String path, String name,String tplPath,
 			HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		if (vldExist(name, errors)) {
 			return errors;
 		}
+		if (!name.startsWith(tplPath)) {
+			errors.addErrorCode(INVALID_PARAM);
+		}
+		if(isUnValidName(path, name, tplPath, errors)){
+			errors.addErrorCode(INVALID_PARAM);
+		}
 		return errors;
 	}
 
-	private WebErrors validateDelete(String root, String[] names,
+	private WebErrors validateUpdate(String root, String name, String tplPath, String source,
+			HttpServletRequest request) {
+		WebErrors errors = WebErrors.create(request);
+		if (vldExist(name, errors)) {
+			return errors;
+		}
+		if(isUnValidName(root, name, tplPath, errors)){
+			errors.addErrorCode(INVALID_PARAM);
+		}
+		return errors;
+	}
+
+	private WebErrors validateDelete(String[] names, String tplPath,
 			HttpServletRequest request) {
 		WebErrors errors = WebErrors.create(request);
 		errors.ifEmpty(names, "names");
 		for (String id : names) {
-			vldExist(id, errors);
+			if (vldExist(id, errors)) {
+				return errors;
+			}
+			if(isUnValidName(id, id, tplPath, errors)){
+				errors.addErrorCode(INVALID_PARAM);
+				return errors;
+			}
 		}
 		return errors;
 	}
@@ -318,7 +412,24 @@ public class TemplateAct {
 		}
 		return false;
 	}
+	
+	private boolean isUnValidName(String path,String name,String tplPath, WebErrors errors) {
+		if (!path.startsWith(tplPath)||path.contains("../")||path.contains("..\\")||name.contains("..\\")||name.contains("../")) {
+			return true;
+		}else{
+			return false;
+		}
+	}
 
+	private String handerStyle(String style) {
+		if (TEXT_AREA.equals(style) || EDITOR.equals(style)) {
+			return style;
+		}
+		return TEXT_AREA;
+	}
+
+	@Autowired
+	private CmsLogMng cmsLogMng;
 	private TplManager tplManager;
 	private CmsResourceMng resourceMng;
 	private CmsSiteMng cmsSiteMng;
